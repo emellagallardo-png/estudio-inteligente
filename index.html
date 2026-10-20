@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESTUDIO INTELIGENTE 2.0 · Suite Cognitiva de Ingeniería & ITO</title>
+  
+  <!-- SEO & Metadatos Oficiales -->
+  <meta name="description" content="Plataforma de Maestría Neurocognitiva y Formación de Alto Nivel para el Jefe de Inspección Técnica de Obras. Integración de OMEN Doctoral, ATLAS, ITO Auditor, Astra AI y FSRS.">
+  <meta name="author" content="J. Esteban Mella Gallardo - CEO & Jefe de ITO">
+  <meta name="theme-color" content="#060911">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23000' stroke='%23FF5E00' stroke-width='4'/><text x='50' y='62' font-size='38' font-family='Montserrat, sans-serif' font-weight='600' fill='%23FF5E00' text-anchor='middle'>MG</text></svg>">
+  
+  <!-- Google Fonts: Montserrat & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-luxury">
+
+  <!-- ======================================================== -->
+  <!-- 1. HEADER TÁCTICO & IDENTIDAD MG                        -->
+  <!-- ======================================================== -->
+  <header class="app-header" id="main-header">
+    <div class="header-left">
+      <!-- Isotipo Oficial MG Canónico (44x44px, Montserrat 600, #FF5E00) -->
+      <div class="brand-badge-mg" title="Mella Gallardo · Soberanía Fundacional">
+        <span>MG</span>
+      </div>
+      <div class="header-title-block">
+        <h1 class="app-title"><span class="title-bold">ESTUDIO</span> <span class="title-accent">INTELIGENTE</span> <span class="title-sub">2.0</span></h1>
+        <div class="app-subtitle">SUITE COGNITIVA DOCTORAL · DIRECCIÓN & ITO PERICIAL</div>
+      </div>
+    </div>
+
+    <!-- Telemetría Central: Panacea Watchdog & Streak -->
+    <div class="header-center">
+      <div class="telemetry-pill sentinel-pill" title="Protección de Datos & Auto-Guardado Activo">
+        <span class="live-dot green-pulse"></span>
+        <span class="pill-label">PANACEA:</span>
+        <span class="pill-value" id="panacea-status">ONLINE 24/7</span>
+      </div>
+      <div class="telemetry-pill streak-pill" title="Racha de Estudio Continuo Duolingo ConTech">
+        <span class="streak-icon">🔥</span>
+        <span class="pill-label">RACHA:</span>
+        <span class="pill-value" id="user-streak">14 DÍAS</span>
+      </div>
+      <div class="telemetry-pill calendar-pill" id="btn-open-calendar-modal" title="Exámenes Críticos de Esta Semana">
+        <span class="exam-icon">⏳</span>
+        <span class="pill-label">ESTA SEMANA:</span>
+        <span class="pill-value alert-text" id="next-exam-badge">3 PRUEBAS IPLACEX (23 - 25 OCT)</span>
+      </div>
+    </div>
+
+    <!-- Header Derecho: Jwrose Audio Lounge & Controles -->
+    <div class="header-right">
+      <!-- Jwrose Audio Lounge Widget -->
+      <div class="jwrose-player" id="jwrose-audio-widget">
+        <div class="jwrose-badge">
+          <span class="jwrose-icon">🎸</span>
+          <span class="jwrose-name">JWROSE [39]</span>
+        </div>
+        <div class="soundwave-bars" id="audio-visualizer">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <select id="audio-preset-select" class="audio-dropdown" title="Canales Curados YouTube Music">
+          <option value="alpha">🧠 Ondas Alfa 432Hz (Deep Work)</option>
+          <option value="gnr">⚡ Rock Focus (Guns N' Roses / Instrumental)</option>
+          <option value="lofi">☕ Lo-Fi ConTech (Estudio Nocturno)</option>
+          <option value="custom">🔗 Vincular YouTube Music</option>
+        </select>
+        <button class="btn-audio-toggle" id="btn-toggle-audio" title="Reproducir / Pausar Música de Estudio">▶</button>
+      </div>
+
+      <!-- Botón Modo Manos Libres (Audio Interactivo) -->
+      <button class="btn-action-glow voice-btn" id="btn-toggle-voice" title="Modo Audio Interactivo Manos Libres (NotebookLM)">
+        <span class="mic-icon">🎙️</span>
+        <span class="btn-text">VOICE RAG</span>
+      </button>
+
+      <!-- Botón Google AI Studio (Gemini 2.0 Flash / 1.5 Pro) -->
+      <button class="btn-action-glow ai-studio-btn" id="btn-open-ai-modal" onclick="openAiStudioModal()" title="Conexión de Inteligencia Google AI Studio (Gemini 2.0 / 1.5 Pro)">
+        <span class="ai-icon">🔑</span>
+        <span class="btn-text" id="ai-status-label">AI STUDIO</span>
+        <span class="ai-status-dot" id="ai-status-dot" title="Desconectado"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- 2. LAYOUT PRINCIPAL: DASHBOARD DUAL SPLIT-SCREEN         -->
+  <!-- ======================================================== -->
+  <main class="main-container" id="app-workspace">
+
+    <!-- BARRA LATERAL NAVEGADORA DE FRENTES ACADÉMICOS -->
+    <aside class="academic-sidebar" id="sidebar-nav">
+      <div class="sidebar-section-title">FRENTES ACADÉMICOS</div>
+
+      <!-- BLOQUE 1: IPLACEX INGENIERÍA -->
+      <div class="academic-group open" id="group-iplacex">
+        <div class="group-header" onclick="toggleGroup('group-iplacex')">
+          <span class="group-badge iplacex-badge">IPLACEX</span>
+          <span class="group-title">Ing. Construcción</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="group-items">
+          <button class="nav-item active" data-subject="industrializada" onclick="selectSubject('industrializada')">
+            <span class="item-code">IND-401</span>
+            <span class="item-name">Construcción Industrializada</span>
+            <span class="mastery-indicator level-2" title="Nivel 2: Consolidación">●●○</span>
+          </button>
+          <button class="nav-item" data-subject="viales" onclick="selectSubject('viales')">
+            <span class="item-code">VIA-402</span>
+            <span class="item-name">Obras Viales</span>
+            <span class="mastery-indicator level-1" title="Nivel 1: Vulnerable">●○○</span>
+          </button>
+          <button class="nav-item" data-subject="civiles" onclick="selectSubject('civiles')">
+            <span class="item-code">CIV-403</span>
+            <span class="item-name">Obras Civiles</span>
+            <span class="mastery-indicator level-3" title="Nivel 3: Dominado">●●●</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- BLOQUE 2: DIPLOMADOS UC -->
+      <div class="academic-group open" id="group-uc">
+        <div class="group-header" onclick="toggleGroup('group-uc')">
+          <span class="group-badge uc-badge">UC</span>
+          <span class="group-title">Diplomados Gestión</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="group-items">
+          <button class="nav-item" data-subject="proyectos_uc" onclick="selectSubject('proyectos_uc')">
+            <span class="item-code">DIP-01</span>
+            <span class="item-name">Gestión de Proyectos</span>
+            <span class="mastery-indicator level-2">●●○</span>
+          </button>
+          <button class="nav-item" data-subject="contratos_uc" onclick="selectSubject('contratos_uc')">
+            <span class="item-code">DIP-02</span>
+            <span class="item-name">Administración de Contratos</span>
+            <span class="mastery-indicator level-1">●○○</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- BLOQUE 3: COURSERA GLOBAL & IA -->
+      <div class="academic-group open" id="group-coursera">
+        <div class="group-header" onclick="toggleGroup('group-coursera')">
+          <span class="group-badge coursera-badge">GLOBAL</span>
+          <span class="group-title">Coursera Tech</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="group-items">
+          <button class="nav-item" data-subject="google_ia" onclick="selectSubject('google_ia')">
+            <span class="item-code">GGL-AI</span>
+            <span class="item-name">Google IA & Multimodal</span>
+            <span class="mastery-indicator level-3">●●●</span>
+          </button>
+          <button class="nav-item" data-subject="palermo_contech" onclick="selectSubject('palermo_contech')">
+            <span class="item-code">PAL-01</span>
+            <span class="item-name">IA en Construcción (U. Palermo)</span>
+            <span class="mastery-indicator level-2">●●○</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- HERRAMIENTAS RÁPIDAS -->
+      <div class="sidebar-section-title">HERRAMIENTAS PRIME</div>
+      <div class="quick-tools">
+        <button class="tool-btn" id="btn-open-duolingo" onclick="openDuolingoModal()">
+          <span class="tool-icon">🇬🇧</span>
+          <div class="tool-info">
+            <span class="tool-title">English Sprint</span>
+            <span class="tool-desc">FIDIC & ConTech (5 min)</span>
+          </div>
+        </button>
+        <button class="tool-btn" id="btn-open-youtube-ingest" onclick="openYoutubeModal()">
+          <span class="tool-icon">📺</span>
+          <div class="tool-info">
+            <span class="tool-title">Resumir YouTube</span>
+            <span class="tool-desc">Timestamps & NCh</span>
+          </div>
+        </button>
+        <button class="tool-btn" id="btn-open-pdf-ingest" onclick="triggerPdfUpload()">
+          <span class="tool-icon">📑</span>
+          <div class="tool-info">
+            <span class="tool-title">Ingesta de PDFs</span>
+            <span class="tool-desc">Diapositivas y apuntes</span>
+          </div>
+        </button>
+        <input type="file" id="pdf-file-input" accept="application/pdf" style="display:none;" onchange="handlePdfUpload(event)">
+      </div>
+
+      <!-- STATUS RESUMEN TELEMETRÍA CEREBRAL -->
+      <div class="cognitive-status-card">
+        <div class="stat-header">
+          <span>RETENCIÓN PROMEDIO</span>
+          <span class="stat-percent" id="retention-percent">78.4%</span>
+        </div>
+        <div class="stat-bar-container">
+          <div class="stat-bar-fill" id="retention-bar" style="width: 78.4%;"></div>
+        </div>
+        <div class="stat-footer">
+          <span>FSRS: 4 tarjetas para hoy</span>
+          <span class="alert-link" onclick="openCardsModal()">Repasar</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO CENTRAL / TABLERO INTERACTIVO -->
+    <section class="workspace-viewport">
+
+      <!-- ======================================================== -->
+      <!-- BANNER DE DECISIÓN EN 3 SEGUNDOS (HERO CARDS)            -->
+      <!-- ======================================================== -->
+      <div class="decision-hero-grid">
+        <!-- Tarjeta 1: Prioridad de Examen (TRIPLE PRUEBA IPLACEX ESTA SEMANA) -->
+        <div class="hero-card exam-priority-card" style="border-color: #EF4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(14, 20, 38, 0.95) 100%);">
+          <div class="card-badge-row">
+            <span class="badge-priority" style="background: rgba(239, 68, 68, 0.2); color: #EF4444;">🚨 SEMANA CRÍTICA IPLACEX (3 PRUEBAS)</span>
+            <span class="badge-date" style="color: #FCA5A5; font-weight:700;">23, 24 y 25 Octubre</span>
+          </div>
+          <h2 class="hero-card-title" id="hero-exam-title">Triple Evaluación: Obras Civiles, Industrializada & Viales</h2>
+          <p class="hero-card-desc">
+            Esta semana cierran las 3 evaluaciones sumativas de tu bimestre IPLACEX:<br>
+            • <strong>Obras Civiles (CIV-403):</strong> Cierre Viernes 23 Oct (23:59 hrs)<br>
+            • <strong>Construcción Industrializada (IND-401):</strong> Cierre Sábado 24 Oct (23:59 hrs)<br>
+            • <strong>Obras Viales (VIA-402):</strong> Cierre Domingo 25 Oct (23:59 hrs)
+          </p>
+          <div class="hero-card-actions" style="flex-wrap: wrap; gap: 8px;">
+            <button class="btn-primary-glow" onclick="startSprint('civiles')" style="background: #00F0FF; color:#000;">
+              <span>⚡ Sprint Civiles (23)</span>
+            </button>
+            <button class="btn-primary-glow" onclick="startSprint('industrializada')" style="background: #A855F7; color:#FFF;">
+              <span>⚡ Sprint Industrializada (24)</span>
+            </button>
+            <button class="btn-primary-glow" onclick="startSprint('viales')" style="background: #FF5E00; color:#000;">
+              <span>⚡ Sprint Viales (25)</span>
+            </button>
+            <button class="btn-secondary" onclick="switchPedagogicalMode('calendar')">Ver en Calendario</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Radar de Vulnerabilidad Cognitiva (Brecha Crítica) -->
+        <div class="hero-card vulnerability-card">
+          <div class="card-badge-row">
+            <span class="badge-vulnerability">BRECHA DIAGNÓSTICA CRÍTICA</span>
+            <span class="badge-metric" id="vuln-score">Retención: 41%</span>
+          </div>
+          <h2 class="hero-card-title" id="hero-vuln-title">Administración de Contratos · Claims & Multas</h2>
+          <p class="hero-card-desc">Detectadas 3 lagunas en el análisis de cartas Gantt y causales de ampliación de plazo según Bases Administrativas.</p>
+          <div class="hero-card-actions">
+            <button class="btn-warning-glow" onclick="startSprint('contratos_uc')">
+              <span>🎯 REFORZAR LAGUNAS EN ROJO</span>
+            </button>
+            <button class="btn-secondary" onclick="showFeynmanReview()">Ver Diagnóstico Feynman</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- VISTA DINÁMICA: MOTOR DOCTORAL OMEN + ATLAS + ITO        -->
+      <!-- ======================================================== -->
+      <div class="study-session-container" id="study-session-view">
+
+        <!-- Barra de Estado de la Sesión -->
+        <div class="session-header-bar">
+          <div class="session-subject-info">
+            <span class="active-subject-badge" id="current-subject-badge">IPLACEX · IND-401</span>
+            <h3 class="active-lesson-title" id="current-lesson-title">Módulo 03: Hormigón Prefabricado & Montaje Industrializado</h3>
+          </div>
+          
+          <!-- Selector de Modo Pedagógico -->
+          <div class="pedagogical-mode-tabs">
+            <button class="mode-tab" id="tab-mode-triad" onclick="switchPedagogicalMode('triad')">
+              <span>🏛️ TRÍADA PERICIAL</span>
+            </button>
+            <button class="mode-tab" id="tab-mode-astra" onclick="switchPedagogicalMode('astra')">
+              <span>⚡ ASTRA AI SOCRÁTICO</span>
+            </button>
+            <button class="mode-tab" id="tab-mode-feynman" onclick="switchPedagogicalMode('feynman')">
+              <span>🔬 VALIDADOR FEYNMAN</span>
+            </button>
+            <button class="mode-tab" id="tab-mode-pdf" onclick="switchPedagogicalMode('pdf')">
+              <span>📑 VISOR PDF / SPLIT</span>
+            </button>
+            <button class="mode-tab" id="tab-mode-calendar" onclick="switchPedagogicalMode('calendar')">
+              <span>📅 CALENDARIO & CLASES</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL 1: LA TRÍADA PERICIAL (OMEN + ATLAS + ITO AUDITOR) -->
+        <div class="pedagogical-panel active" id="panel-triad">
+          <div class="triad-cards-grid">
+            
+            <!-- Columna 1: OMEN Doctoral (Teoría Conceptual) -->
+            <div class="triad-card triad-omen">
+              <div class="triad-card-header">
+                <div class="agent-avatar omen-avatar">AG-41</div>
+                <div>
+                  <h4 class="agent-name">OMEN DOCTORAL</h4>
+                  <span class="agent-role">Docencia, Neuroaprendizaje & Principios</span>
+                </div>
+              </div>
+              <div class="triad-card-content" id="omen-content-box">
+                <p><strong>Fundamento Elemental:</strong> La industrialización de elementos estructurales reemplaza el hormigonado tradicional en obra por componentes premoldeados bajo ambiente controlado en planta.</p>
+                <div class="formula-block">
+                  $$R_{28} = R_{7} + k \cdot \ln(t) \quad \text{[Madurez de Curado Acelerado por Vapor]}$$
+                </div>
+                <p>Al curar al vapor a 65°C, la ganancia de resistencia a 18 horas alcanza el 70% del $f'c$, permitiendo el desmolde y tensado temprano de torones de pretensado.</p>
+                <div class="key-takeaway">
+                  <span class="takeaway-label">CLAVE DOCTORAL:</span> El punto de fallo en estructuras industrializadas casi nunca es el elemento prefabricado; es la conexión húmeda (*grout*) en terreno.
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna 2: ATLAS Operativo (Norma Chilena & Terreno) -->
+            <div class="triad-card triad-atlas">
+              <div class="triad-card-header">
+                <div class="agent-avatar atlas-avatar">ATLAS</div>
+                <div>
+                  <h4 class="agent-name">AGENTE ATLAS</h4>
+                  <span class="agent-role">Normativa Chilena, Ensayos & Faena</span>
+                </div>
+              </div>
+              <div class="triad-card-content" id="atlas-content-box">
+                <p><strong>Marco Normativo Vinculante:</strong></p>
+                <ul class="normative-list">
+                  <li><strong>NCh 170:2016:</strong> Hormigón - Requisitos generales (curado y tolerancias de colocación).</li>
+                  <li><strong>NCh 430:2008:</strong> Hormigón armado - Requisitos de diseño y cálculo antisísmico.</li>
+                  <li><strong>NCh 1534:</strong> Mecánica de suelos - Densidad en terreno y nivelación de fundaciones de apoyo.</li>
+                </ul>
+                <div class="field-warning-box">
+                  <strong>⚠️ ALERTA DE FAENA:</strong> En montajes de pilares prefabricados con vainas de anclaje, el mortero de relleno (*Grout*) debe ser sin retracción (ASTM C1107) con resistencia mínima igual o superior a <strong>60 MPa</strong>.
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna 3: ITO AUDITOR (Acción de Terreno & Veredicto) -->
+            <div class="triad-card triad-ito">
+              <div class="triad-card-header">
+                <div class="agent-avatar ito-avatar">ITO</div>
+                <div>
+                  <h4 class="agent-name">ITO AUDITOR</h4>
+                  <span class="agent-role">Fiscalización, Libro de Obras & Recepción</span>
+                </div>
+              </div>
+              <div class="triad-card-content" id="ito-content-box">
+                <div class="book-folio-header">
+                  <span>LIBRO DE OBRAS DIGITAL · FOLIO #ITO-IND-084</span>
+                  <span class="status-pill status-hold">RETENCIÓN TÉCNICA</span>
+                </div>
+                <p><strong>Criterio de Recepción en Obra:</strong></p>
+                <ol class="action-steps">
+                  <li>Verificar verticalidad de pilares mediante estación total con tolerancia de $\pm 5\text{ mm}$ en altura total.</li>
+                  <li>Muestrear 3 cubos de 5x5 cm de mortero grout por cada jornada de inyección.</li>
+                  <li><strong>Dictamen Pericial:</strong> No autorizar colocación de vigas superiores hasta que el ensayo a compresión del grout certifique al menos el 80% de la resistencia proyectada.</li>
+                </ol>
+                <button class="btn-micro-folio" onclick="openFolioTemplate()">Descargar Minuta de Rechazo / Aprobación</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PANEL 2: MOTOR ASTRA AI SOCRÁTICO PASO A PASO -->
+        <div class="pedagogical-panel" id="panel-astra">
+          <div class="astra-interactive-wrapper">
+            <div class="astra-header">
+              <div class="astra-indicator">
+                <span class="astra-orb"></span>
+                <span>MOTOR SOCRÁTICO ASTRA AI · PASO A PASO INTERACTIVO</span>
+              </div>
+              <div class="astra-step-counter" id="astra-step-indicator">PASO 2 DE 4 · VERIFICACIÓN OBLIGATORIA</div>
+            </div>
+
+            <div class="astra-scenario-box">
+              <div class="scenario-tag">CASO REAL DE TERRENO · RESOLUCIÓN GUIADA</div>
+              <h4 class="scenario-title">Montaje de Vigas Prefabricadas de 28 Metros en Viaducto Vial</h4>
+              <p class="scenario-body">
+                El contratista posiciona la grúa móvil de 120 toneladas sobre el terraplén de acceso para izar una viga pretensada de 34 toneladas. El clima registra ráfagas de viento de 38 km/h. La empresa constructora solicita autorización para iniciar el izaje antes de que caiga la tarde.
+              </p>
+            </div>
+
+            <!-- Checkpoint Socrático (Te detiene obligatoriamente) -->
+            <div class="astra-checkpoint-card" id="current-checkpoint">
+              <div class="checkpoint-question">
+                <span class="q-icon">❓</span>
+                <span id="checkpoint-text">Como Jefe de ITO, ¿cuál es tu dictamen inmediato conforme a la normativa chilena de izajes y seguridad (DS 594 y estándares de grúa torre/móvil)?</span>
+              </div>
+
+              <div class="checkpoint-options" id="checkpoint-options-grid">
+                <button class="opt-btn" onclick="submitAstraAnswer(0)">
+                  <span class="opt-letter">A</span>
+                  <span class="opt-text">Autorizar el izaje con escolta de vientos terrestres manuales si la carga está amarrada en 4 puntos.</span>
+                </button>
+                <button class="opt-btn" onclick="submitAstraAnswer(1)">
+                  <span class="opt-letter">B</span>
+                  <span class="opt-text">Paralizar inmediatamente la maniobra de izaje por superar el umbral crítico de viento (>35 km/h) y exigir certificado de cálculo de sustentación de los pads de apoyo de la grúa sobre el terraplén.</span>
+                </button>
+                <button class="opt-btn" onclick="submitAstraAnswer(2)">
+                  <span class="opt-letter">C</span>
+                  <span class="opt-text">Permitir la maniobra siempre que el contratista firme una carta de asunción de responsabilidad exclusiva sin anotar en el Libro de Obras.</span>
+                </button>
+              </div>
+
+              <!-- Feedback Dinámico de Astra AI -->
+              <div class="checkpoint-feedback hidden" id="checkpoint-feedback-box">
+                <div class="feedback-title" id="feedback-title">¡CORRECTO! FUNDAMENTO PERICIAL IMPECABLE</div>
+                <div class="feedback-body" id="feedback-body">
+                  Conforme al DS 594 y estándares de maniobras de alto tonelaje, cualquier ráfaga superior a 35 km/h desestabiliza vigas de gran esbeltez por efecto vela. Además, la carga puntual sobre terraplenes no consolidados genera riesgo crítico de volcamiento. 
+                </div>
+                <button class="btn-next-step" onclick="nextAstraStep()">Avanzar al Paso 3: Protocolo de Apoyos de Neopreno ➔</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PANEL 3: VALIDADOR FEYNMAN INVERSO & RADAR DE ERRORES -->
+        <div class="pedagogical-panel" id="panel-feynman">
+          <div class="feynman-container">
+            <div class="feynman-prompt-card">
+              <span class="feynman-badge">TÉCNICA FEYNMAN · EXPLICACIÓN CON TUS PALABRAS</span>
+              <h3>Explica cómo se ejecuta y fiscaliza la inyección de Grout en vainas de pretensado</h3>
+              <p>Demuestra que dominas el concepto. Explícalo con lenguaje técnico pericial pero sin copiar la teoría. El motor de IA analizará tu respuesta, medirá tu precisión pericial y resaltará en <strong>ROJO</strong> tus omisiones o errores conceptuales.</p>
+            </div>
+
+            <div class="feynman-input-area">
+              <textarea id="feynman-user-input" class="feynman-textarea" placeholder="Escribe aquí tu explicación detallada (o presiona el botón de micrófono para dictarla)...">Para la inyección de vainas de pretensado, primero se limpia con aire comprimido exento de aceite. Se prepara un mortero fluido sin retracción. Se inyecta desde el punto más bajo hacia los respiraderos superiores hasta que salga pasta limpia sin burbujas de aire. Luego se sellan las boquillas bajo presión sostenida de 0.5 MPa.</textarea>
+              <div class="feynman-controls">
+                <button class="btn-mic-dictate" onclick="toggleVoiceInput('feynman-user-input')">
+                  <span>🎙️ Dictar por Voz</span>
+                </button>
+                <button class="btn-primary-glow" onclick="evaluateFeynmanExplanation()">
+                  <span>🔬 ANALIZAR RADIOGRAFÍA DE ERRORES</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Radiografía de Errores Resultante -->
+            <div class="feynman-result-card" id="feynman-diagnostic-results">
+              <h4>RADIOGRAFÍA PERICIAL DE COMPRENSIÓN (DIAGNÓSTICO EN TIEMPO REAL):</h4>
+              <div class="heatmap-text" id="feynman-analyzed-markup">
+                Para la inyección de vainas de pretensado, primero se limpia con aire comprimido exento de aceite <span class="tag-green">[OK: Preparación previa correcta]</span>. Se prepara un mortero fluido sin retracción. Se inyecta desde el punto más bajo hacia los respiraderos superiores hasta que salga pasta limpia sin burbujas de aire <span class="tag-green">[OK: Flujo unidireccional]</span>. Luego se sellan las boquillas bajo presión sostenida de 0.5 MPa. 
+                <div class="gap-alert-box">
+                  <strong style="color: #EF4444;">🚨 LAGUNAS CONCEPTUALES DETECTADAS (OMISIONES CRÍTICAS):</strong>
+                  <ul>
+                    <li><span class="text-red">Omitiste el ensayo de cono de Marsh (ASTM C939):</span> Es obligatorio registrar la fluidez del grout antes de autorizar la inyección (debe estar entre 11 y 30 segundos según EETT).</li>
+                    <li><span class="text-red">Omitiste la prueba de exudación a 3 horas (ASTM C940):</span> La exudación de agua en vainas verticales debe ser 0% para evitar corrosión bajo tensión en los torones.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Calibración FSRS de Memoria -->
+              <div class="fsrs-calibration-pill">
+                <span class="fsrs-tag">ALGORITMO FSRS:</span>
+                <span>Dificultad intrínseca: <strong>7.2/10</strong> · Intervalo de próximo repaso recalibrado para: <strong>Mañana a las 21:00 hrs</strong></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PANEL 4: VISOR DE PDF INTEGRADO / MODO SPLIT-SCREEN -->
+        <div class="pedagogical-panel" id="panel-pdf">
+          <div class="pdf-split-wrapper">
+            <!-- Columna Izquierda: Visor PDF -->
+            <div class="pdf-viewer-col">
+              <div class="pdf-viewer-toolbar">
+                <span class="pdf-filename" id="pdf-active-name">Diapositivas_Clase_03_Industrializacion_IPLACEX.pdf</span>
+                <div class="pdf-page-controls">
+                  <button class="btn-tool" onclick="changePdfPage(-1)">◀ Anterior</button>
+                  <span id="pdf-page-num">Pág 12 / 48</span>
+                  <button class="btn-tool" onclick="changePdfPage(1)">Siguiente ▶</button>
+                </div>
+              </div>
+              
+              <div class="pdf-render-canvas-container" id="pdf-canvas-container">
+                <!-- Simulación visual de diapositiva técnica de alta resolución -->
+                <div class="mock-slide-content">
+                  <div class="slide-header-mock">IPLACEX · ESCUELA DE CONSTRUCCIÓN · ASIGNATURA: CONSTRUCCIÓN INDUSTRIALIZADA</div>
+                  <h3>TEMA 3.2: CONEXIONES HÚMEDAS Y EMBUTIDAS EN HORMIGÓN PREFABRICADO</h3>
+                  <div class="slide-diagram-mock">
+                    <div class="diagram-box">
+                      <div class="pilar-mock">PILAR PREMOLDEADO (H-50)</div>
+                      <div class="grout-joint-mock">JUNTA GROUT DE ALTA RESISTENCIA (60 MPa)</div>
+                      <div class="fundacion-mock">VÁSTAGOS DE ANCLAJE ACERO A63-42H EN FUNDACIÓN</div>
+                    </div>
+                  </div>
+                  <div class="slide-notes-mock">
+                    * Requisito de confinamiento sísmico según NCh430. La longitud de anclaje de armaduras longitudinales debe multiplicarse por un factor de 1.25 ante cargas cíclicas reversibles.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Chat Interactivo sobre el PDF -->
+            <div class="pdf-chat-col">
+              <div class="chat-header-bar">
+                <span class="chat-title">OMEN & ATLAS · INTERACCIÓN SOBRE EL DOCUMENTO</span>
+                <span class="chat-source-tag">Grounded AI</span>
+              </div>
+              <div class="chat-messages-container" id="pdf-chat-messages">
+                <div class="chat-msg ai-msg">
+                  <div class="msg-sender">OMEN AG-41</div>
+                  <div class="msg-text">Esteban, estoy leyendo la <strong>página 12</strong> de tu PDF de IPLACEX. Nota que el profesor destaca el factor de 1.25 en longitudes de anclaje sísmico. ¿Deseas que te formule una pregunta tipo examen sobre esta diapositiva o que el ITO Auditor te diga cómo fiscalizar este anclaje en terreno?</div>
+                </div>
+              </div>
+              <div class="chat-input-bar">
+                <input type="text" id="pdf-chat-input" class="chat-input" placeholder="Pregúntale a OMEN o a ATLAS sobre esta página...">
+                <button class="btn-send-chat" onclick="sendPdfChatMessage()">Enviar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 5: CALENDARIO ACADÉMICO & CLASES EN VIVO VISUAL -->
+        <div class="pedagogical-panel" id="panel-calendar">
+          <div class="calendar-visual-wrapper">
+            
+            <!-- Barra Superior del Calendario: Navegación y Filtros -->
+            <div class="cal-view-toolbar">
+              <div class="cal-month-selector">
+                <button class="cal-nav-btn" onclick="navigateCalendarMonth(-1)">◀</button>
+                <h3 class="cal-current-month" id="cal-month-title">OCTUBRE 2026</h3>
+                <button class="cal-nav-btn" onclick="navigateCalendarMonth(1)">▶</button>
+              </div>
+
+              <div class="cal-filter-pills">
+                <button class="filter-pill active" onclick="filterCalendarEvents('all')">Todos (7)</button>
+                <button class="filter-pill pill-exam" onclick="filterCalendarEvents('exam')">🔴 Pruebas / Exámenes</button>
+                <button class="filter-pill pill-class" onclick="filterCalendarEvents('class')">🔵 Clases Online</button>
+                <button class="filter-pill pill-study" onclick="filterCalendarEvents('study')">🟢 Time-Blocking</button>
+              </div>
+
+              <div class="cal-toolbar-actions">
+                <button class="btn-tool-accent" onclick="downloadIcsCalendar()" title="Descargar archivo .ICS compatible con Google Calendar y Xiaomi">
+                  <span>📥 Exportar .ICS</span>
+                </button>
+                <button class="btn-primary-glow" onclick="syncWithGoogleCalendar()">
+                  <span>🔄 Sincronizar Google</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Grilla Principal del Calendario (2 Columnas: Matriz Mensual + Agenda Detallada) -->
+            <div class="calendar-grid-dashboard">
+              
+              <!-- Columna 1: Matriz de Días del Mes -->
+              <div class="cal-matrix-container">
+                <div class="cal-weekdays-header">
+                  <span>LUN</span><span>MAR</span><span>MIÉ</span><span>JUE</span><span>VIE</span><span>SÁB</span><span>DOM</span>
+                </div>
+                <div class="cal-days-grid" id="cal-interactive-grid">
+                  <!-- Generado dinámicamente con JavaScript -->
+                </div>
+              </div>
+
+              <!-- Columna 2: Agenda Detallada de Eventos -->
+              <div class="cal-agenda-container">
+                <div class="agenda-header">
+                  <h4 id="agenda-selected-date-title">EVENTOS PRÓXIMOS PROGRAMADOS</h4>
+                  <span class="agenda-counter" id="agenda-event-count">3 Pruebas Críticas</span>
+                </div>
+                
+                <div class="agenda-scroll-list" id="agenda-items-list">
+                  <!-- Renderizado dinámicamente con JavaScript -->
+                </div>
+
+                <div class="agenda-add-block">
+                  <div class="add-block-title">⚡ PROGRAMAR BLOQUE PROTEGIDO (TIME-BLOCKING)</div>
+                  <div class="add-block-inputs">
+                    <input type="text" id="custom-study-subject" placeholder="Tema a estudiar..." value="Obras Viales · Ensayos Marshall">
+                    <select id="custom-study-duration">
+                      <option value="15">15 min (Micro-sprint)</option>
+                      <option value="30">30 min (Bloque estándar)</option>
+                      <option value="45" selected>45 min (Deep Work OMEN)</option>
+                    </select>
+                    <button class="btn-tool-accent" onclick="addPersonalTimeBlock()">Reservar en Calendario</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- MAPA DE CALOR GITHUB-STYLE & RADAR DE ASIGNATURAS        -->
+      <!-- ======================================================== -->
+      <div class="analytics-metrics-grid">
+        
+        <!-- Mapa de Calor: Actividad y Consistencia Diaria -->
+        <div class="metric-card heatmap-card">
+          <div class="metric-card-header">
+            <h4>CONSISTENCIA DE ESTUDIO · ÚLTIMAS 12 SEMANAS</h4>
+            <span class="heatmap-legend">
+              Menos <span class="box-0"></span><span class="box-1"></span><span class="box-2"></span><span class="box-3"></span> Más
+            </span>
+          </div>
+          <div class="heatmap-grid" id="github-heatmap-container">
+            <!-- Generado dinámicamente con JavaScript -->
+          </div>
+          <div class="heatmap-footer-stats">
+            <span>🔥 Racha actual: 14 días</span>
+            <span>⚡ Minutos estudiados esta semana: 320 min</span>
+            <span>🎯 Tasa de retención global: 82%</span>
+          </div>
+        </div>
+
+        <!-- Radar de Asignaturas Críticas (Canvas Radar) -->
+        <div class="metric-card radar-card">
+          <div class="metric-card-header">
+            <h4>RADAR DE DOMINIO POR ASIGNATURA</h4>
+            <span class="radar-legend">Escala 0 - 100%</span>
+          </div>
+          <div class="radar-canvas-box">
+            <canvas id="subjectRadarCanvas" width="300" height="200"></canvas>
+          </div>
+          <div class="radar-subtext">
+            <span>Vulnerabilidad más alta: <strong>Administración de Contratos (41%)</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- 3. MODALES TÁCTICOS Y HERRAMIENTAS ADICIONALES           -->
+  <!-- ======================================================== -->
+
+  <!-- MODAL: DUOLINGO ENGLISH SPRINT (5 MINUTOS) -->
+  <div class="modal-backdrop hidden" id="modal-duolingo">
+    <div class="modal-container duolingo-modal-card">
+      <div class="modal-header">
+        <div class="duolingo-title-bar">
+          <span class="duo-flag">🇬🇧</span>
+          <div>
+            <h3>TECHNICAL ENGLISH & FIDIC · 5-MIN SPRINT</h3>
+            <span class="duo-subtitle">Vocabulario de Contratos Internacionales, ConTech & Faena</span>
+          </div>
+        </div>
+        <div class="duo-stats">
+          <span class="duo-lives">❤️❤️❤️</span>
+          <span class="btn-close-modal" onclick="closeDuolingoModal()">✕</span>
+        </div>
+      </div>
+
+      <div class="duolingo-body" id="duolingo-game-body">
+        <div class="duo-progress-bar">
+          <div class="duo-progress-fill" id="duo-progress" style="width: 40%;"></div>
+        </div>
+
+        <div class="duo-challenge-box">
+          <span class="duo-prompt-type">SELECCIONA LA TRADUCCIÓN TÉCNICA EXACTA:</span>
+          <h2 class="duo-target-phrase">«The Engineer issued a Taking-Over Certificate with minor outstanding punch-list items.»</h2>
+          
+          <div class="duo-options-list" id="duo-options-container">
+            <button class="duo-opt-btn" onclick="checkDuolingoAnswer(0)">
+              El Ingeniero emitió el Certificado de Recepción Provisoria con observaciones menores pendientes de la lista de remates.
+            </button>
+            <button class="duo-opt-btn" onclick="checkDuolingoAnswer(1)">
+              El Constructor entregó un acta de reclamo de pagos por trabajos no cobrados en el presupuesto.
+            </button>
+            <button class="duo-opt-btn" onclick="checkDuolingoAnswer(2)">
+              El ITO ordenó la paralización total de faena debido a deficiencias graves en la calidad del hormigón.
+            </button>
+          </div>
+        </div>
+
+        <div class="duo-feedback-bar hidden" id="duo-feedback">
+          <span class="feedback-msg" id="duo-feedback-text">¡EXCELENTE! Taking-Over Certificate = Recepción Provisoria (FIDIC Red Book).</span>
+          <button class="btn-duo-next" onclick="nextDuolingoQuestion()">CONTINUAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESUMIDOR INTELIGENTE DE YOUTUBE -->
+  <div class="modal-backdrop hidden" id="modal-youtube">
+    <div class="modal-container youtube-modal-card">
+      <div class="modal-header">
+        <div class="yt-header-title">
+          <span class="yt-icon">📺</span>
+          <h3>RESUMIDOR DE CLASES Y WEBINARS DE YOUTUBE (ESTILO NOTEBOOKLM)</h3>
+        </div>
+        <span class="btn-close-modal" onclick="closeYoutubeModal()">✕</span>
+      </div>
+
+      <div class="modal-body">
+        <p class="yt-instruction">Pega la URL del video técnico, clase grabada o webinar de ingeniería. El motor Gemini Argon extraerá la transcripción, generará timestamps y cruzará el contenido con la normativa chilena.</p>
+        
+        <div class="yt-input-row">
+          <input type="url" id="yt-url-input" class="yt-url-field" placeholder="https://www.youtube.com/watch?v=ejemplo_clase_viales">
+          <button class="btn-primary-glow" onclick="processYoutubeUrl()">
+            <span>⚡ PROCESAR Y RESUMIR</span>
+          </button>
+        </div>
+
+        <div class="yt-result-container hidden" id="yt-result-box">
+          <div class="yt-video-meta">
+            <h4 id="yt-video-title">Clase Magistral: Pavimentos Asfálticos y Mezclas Superpave</h4>
+            <span class="yt-duration">Duración analizada: 42 min · Transcripción 100% procesada</span>
+          </div>
+
+          <div class="yt-timestamps-list">
+            <div class="timestamp-item">
+              <span class="time-tag">04:15</span>
+              <span class="time-desc">Ensayos de caracterización de ligantes asfálticos (Viscosidad y Penetración).</span>
+            </div>
+            <div class="timestamp-item">
+              <span class="time-tag">18:30</span>
+              <span class="time-desc">Compactación en caliente y control de temperatura de descarga del camión tolva.</span>
+            </div>
+            <div class="timestamp-item">
+              <span class="time-tag">31:10</span>
+              <span class="time-desc">Control de densidad mediante densímetro nuclear y extracción de testigos cilíndricos.</span>
+            </div>
+          </div>
+
+          <div class="yt-nch-note">
+            <strong>NOTA PERICIAL ATLAS & ITO AUDITOR:</strong> El video menciona el estándar AASHTO, pero en Chile el MOP rige mediante el <em>Volumen 5 del Manual de Carreteras (Sección 5.408)</em>. La densidad mínima exigida en obra es el <strong>97% de la densidad Marshall</strong> de diseño.
+          </div>
+
+          <button class="btn-add-fsrs" onclick="addYtCardsToFsrs()">➕ Agregar 5 Tarjetas de este Video a mi Repaso FSRS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GOOGLE CALENDAR & CRONOGRAMA DE EXÁMENES -->
+  <div class="modal-backdrop hidden" id="modal-calendar">
+    <div class="modal-container calendar-modal-card">
+      <div class="modal-header">
+        <div class="cal-header-title">
+          <span class="cal-icon">📅</span>
+          <h3>CRONOGRAMA ACADÉMICO · PRUEBAS Y CLASES ONLINE</h3>
+        </div>
+        <span class="btn-close-modal" onclick="closeCalendarModal()">✕</span>
+      </div>
+
+      <div class="modal-body">
+        <div class="calendar-list" id="calendar-events-list">
+          <!-- Item 1: Obras Civiles -->
+          <div class="cal-event-card exam-event">
+            <div class="cal-event-date">
+              <span class="day">23</span>
+              <span class="month">OCT</span>
+            </div>
+            <div class="cal-event-details">
+              <span class="event-tag tag-exam">🔴 EVALUACIÓN SUMATIVA</span>
+              <h4>Obras Civiles (CIV-403) · Fundaciones y Hormigón Masivo</h4>
+              <p>Plataforma IPLACEX · Cierre Viernes 23:59 hrs · Ponderación: 30%</p>
+            </div>
+            <div class="cal-event-actions">
+              <span class="countdown-tag alert-tag">En 3 días (Viernes)</span>
+            </div>
+          </div>
+
+          <!-- Item 2: Construcción Industrializada -->
+          <div class="cal-event-card exam-event">
+            <div class="cal-event-date">
+              <span class="day">24</span>
+              <span class="month">OCT</span>
+            </div>
+            <div class="cal-event-details">
+              <span class="event-tag tag-exam">🔴 EVALUACIÓN SUMATIVA</span>
+              <h4>Construcción Industrializada (IND-401) · Prefabricados & Grout</h4>
+              <p>Plataforma IPLACEX · Cierre Sábado 23:59 hrs · Ponderación: 30%</p>
+            </div>
+            <div class="cal-event-actions">
+              <span class="countdown-tag alert-tag">En 4 días (Sábado)</span>
+            </div>
+          </div>
+
+          <!-- Item 3: Obras Viales -->
+          <div class="cal-event-card exam-event">
+            <div class="cal-event-date">
+              <span class="day">25</span>
+              <span class="month">OCT</span>
+            </div>
+            <div class="cal-event-details">
+              <span class="event-tag tag-exam">🔴 EVALUACIÓN SUMATIVA</span>
+              <h4>Obras Viales (VIA-402) · Pavimentos Asfálticos y Marshall</h4>
+              <p>Plataforma IPLACEX · Cierre Domingo 23:59 hrs · Ponderación: 30%</p>
+            </div>
+            <div class="cal-event-actions">
+              <span class="countdown-tag alert-tag">En 5 días (Domingo)</span>
+            </div>
+          </div>
+
+          <!-- Item 4: Clase UC -->
+          <div class="cal-event-card class-event">
+            <div class="cal-event-date">
+              <span class="day">26</span>
+              <span class="month">OCT</span>
+            </div>
+            <div class="cal-event-details">
+              <span class="event-tag tag-class">🔵 CLASE ONLINE EN VIVO</span>
+              <h4>Administración de Contratos · Taller de Resolución de Claims FIDIC</h4>
+              <p>Zoom UC · Lunes 19:00 a 21:30 hrs · Profesor Especialista</p>
+            </div>
+            <div class="cal-event-actions">
+              <span class="countdown-tag normal-tag">En 6 días (Lunes)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cal-footer-actions">
+          <button class="btn-primary-glow" onclick="syncWithGoogleCalendar()">
+            <span>🔄 Sincronizar con Google Calendar de J. Esteban Mella</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: CONEXIÓN SEGURA GOOGLE AI STUDIO (GEMINI API)     -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop hidden" id="modal-ai-studio">
+    <div class="modal-container ai-modal-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255, 94, 0, 0.15); color: #FF5E00; border: 1px solid #FF5E00; display: flex; align-items: center; justify-content: center; font-size: 16px;">⚡</span>
+          <div>
+            <h3 style="margin: 0; font-family: var(--font-display); font-size: 14px; font-weight: 800; color: #FFF;">
+              CEREBRO COGNITIVO · GOOGLE AI STUDIO
+            </h3>
+            <span style="font-size: 10px; color: var(--color-cyan); font-family: var(--font-mono);">
+              GEMINI 2.0 FLASH & 1.5 PRO · AUTONOMÍA 24/7 EN TERRENO Y ESTUDIO
+            </span>
+          </div>
+        </div>
+        <span class="btn-close-modal" onclick="closeAiStudioModal()">✕</span>
+      </div>
+
+      <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="background: rgba(14, 20, 38, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 12px 14px;">
+          <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+            Al conectar su <strong>API Key de Google AI Studio</strong>, sus agentes (<strong>OMEN, ATLAS e ITO AUDITOR</strong>) cobran vida en tiempo real, evaluando sus respuestas del método Feynman, resolviendo dudas de sus 3 pruebas de IPLACEX y auditando normas (NCh170, OGUC) directamente con Gemini 2.0.
+          </p>
+        </div>
+
+        <!-- Estado de la Conexión -->
+        <div id="ai-connection-indicator" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px solid var(--border-subtle);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="ai-active-indicator-light" style="width: 10px; height: 10px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
+            <span id="ai-active-status-text" style="font-size: 11px; font-weight: 700; font-family: var(--font-mono); color: #EF4444;">ESTADO: MODO SIMULACIÓN LOCAL (SIN CLAVE)</span>
+          </div>
+          <span style="font-size: 9.5px; color: var(--text-muted); font-family: var(--font-mono);">LOCAL-FIRST ENCRYPTED</span>
+        </div>
+
+        <!-- Formulario API Key -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: #FFF;">
+              API KEY PERSONAL DE GOOGLE AI STUDIO:
+            </label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: var(--color-orange); text-decoration: none; font-size: 10.5px; font-weight: 600;">
+              ↗ Obtener API Key en Google AI Studio
+            </a>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="password" id="input-ai-api-key" placeholder="AIzaSy..." style="flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: #FFF; font-family: var(--font-mono); font-size: 12px; outline: none;">
+            <button type="button" onclick="toggleApiKeyVisibility()" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 12px; color: #FFF; cursor: pointer; font-size: 12px;" title="Mostrar / Ocultar">👁️</button>
+          </div>
+          <span style="font-size: 10px; color: var(--text-muted);">
+            🔒 Su clave se almacena exclusivamente en su navegador local (<code style="color: var(--color-cyan);">localStorage</code>), garantizando 100% privacidad y sin intermediarios.
+          </span>
+        </div>
+
+        <!-- Selector de Modelo -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: #FFF;">
+            MODELO DE INFERENCIA PREFERIDO:
+          </label>
+          <select id="select-ai-model" style="background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: #FFF; font-family: var(--font-mono); font-size: 12px; outline: none;">
+            <option value="gemini-3.8-flash" selected>⚡ Gemini 3.8 Flash (Recomendado Oficial Google · Inferencia < 1 seg)</option>
+            <option value="gemini-4-argon">🧠 Gemini 4 Argon (Cerebro Doctoral · Máxima Capacidad de Razonamiento)</option>
+            <option value="gemini-2.5-pro">🔬 Gemini 2.5 Pro (Multimodal Avanzado)</option>
+            <option value="gemini-3.5-flash">🚀 Gemini 3.5 Flash</option>
+          </select>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div style="display: flex; gap: 10px; margin-top: 6px;">
+          <button class="btn-primary-glow" onclick="saveAndTestAiStudioKey()" style="flex: 1; justify-content: center; padding: 12px;">
+            <span>⚡ GUARDAR Y PROBAR CONEXIÓN CON GEMINI</span>
+          </button>
+          <button class="btn-secondary" onclick="clearAiStudioKey()" style="padding: 12px 16px; border-color: rgba(239, 68, 68, 0.4); color: #EF4444;">
+            Borrar Clave
+          </button>
+        </div>
+
+        <!-- Diagnóstico de prueba -->
+        <div id="ai-test-result" style="display: none; padding: 10px 12px; border-radius: 6px; font-size: 11px; font-family: var(--font-mono); line-height: 1.4;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 4. FOOTER CORPORATIVO UNIVERSAL (LEY DE MARCA)          -->
+  <!-- ======================================================== -->
+  <footer class="app-footer">
+    <div class="footer-brand-bar">
+      <!-- Isotipo MG Micro (32px) -->
+      <div class="brand-badge-mg micro-badge">
+        <span>MG</span>
+      </div>
+      
+      <!-- Texto Oficial Canónico -->
+      <div class="footer-brand-text">
+        <span class="white-text">MEGA</span>&nbsp;<span class="orange-text">INSPECCIÓN</span>&nbsp;· CONSULTORÍA TÉCNICA INTELIGENTE
+      </div>
+      
+      <!-- Isotipo ITO Micro (32px) -->
+      <div class="brand-badge-ito micro-badge">
+        <span>ITO</span>
+      </div>
+    </div>
+    <div class="footer-subtext">
+      ESTUDIO INTELIGENTE 2.0 · SOFWARE COGNITIVO PERSONAL DEL CEO · CERO ACCESO EXTERNO · LOCAL-FIRST PRIVACY
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

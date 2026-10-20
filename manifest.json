@@ -1,0 +1,22 @@
+{
+  "name": "ESTUDIO INTELIGENTE 2.0",
+  "short_name": "Estudio 2.0",
+  "description": "Suite Cognitiva Doctoral de Ingeniería & ITO para J. Esteban Mella Gallardo",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#060911",
+  "theme_color": "#060911",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><circle cx='96' cy='96' r='90' fill='%23000' stroke='%23FF5E00' stroke-width='8'/><text x='96' y='118' font-size='72' font-family='Montserrat, sans-serif' font-weight='600' fill='%23FF5E00' text-anchor='middle'>MG</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='240' fill='%23000' stroke='%23FF5E00' stroke-width='16'/><text x='256' y='315' font-size='190' font-family='Montserrat, sans-serif' font-weight='600' fill='%23FF5E00' text-anchor='middle'>MG</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

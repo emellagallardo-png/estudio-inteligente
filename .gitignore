@@ -1,0 +1,6 @@
+# Antigravity IDE & System
+.gemini/
+scratch/
+*.log
+Thumbs.db
+desktop.ini
