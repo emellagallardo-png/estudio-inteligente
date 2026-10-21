@@ -466,10 +466,21 @@ async function evaluateFeynmanExplanation() {
     }
   }
 
-  // Fallback a matriz local pericial
+  // Fallback a matriz local pericial con validación en CorpusEngine (Fase 4)
+  let normativeBadge = '';
+  if (typeof CorpusEngine !== 'undefined') {
+    const claimCheck = CorpusEngine.verifyClaim(text);
+    if (claimCheck.verified) {
+      normativeBadge = CorpusEngine.formatCitationBadge(claimCheck.citation);
+    } else {
+      normativeBadge = `<div class="abstain-box" style="margin-top:8px; padding:10px; background:rgba(239,68,68,0.1); border:1px dashed #EF4444; border-radius:4px; font-size:11px; color:#FCA5A5;">${claimCheck.message}</div>`;
+    }
+  }
+
   markupBox.innerHTML = `
-    "${text.slice(0, 150)}..." <span class="tag-green">[OK: Estructura general coherente]</span>.
-    <div class="gap-alert-box">
+    "${escapeHTML(text.slice(0, 150))}..." <span class="tag-green">[OK: Estructura general coherente]</span>.
+    ${normativeBadge}
+    <div class="gap-alert-box" style="margin-top: 10px;">
       <strong style="color: #EF4444;">🚨 RADIOGRAFÍA DE LAGUNAS CONCEPTUALES EN TIEMPO REAL:</strong>
       <ul>
         <li><span class="text-red">Omisión de Tolerancias:</span> No especificaste los milímetros máximos de tolerancia permitidos según la NCh aplicable.</li>
