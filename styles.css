@@ -2276,3 +2276,69 @@ body.dark-luxury {
     padding: 16px;
   }
 }
+
+/* ==========================================================================
+   11. ACTUALIZACIÓN PWA
+   ========================================================================== */
+.pwa-update-notice {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 3000;
+  width: min(420px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 94, 0, 0.55);
+  border-radius: 10px;
+  background: rgba(6, 9, 17, 0.98);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 24px rgba(255, 94, 0, 0.14);
+}
+
+.pwa-update-notice div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pwa-update-notice strong {
+  color: #FFFFFF;
+  font-family: var(--font-display);
+  font-size: 13px;
+}
+
+.pwa-update-notice span {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.pwa-update-notice button {
+  min-height: 40px;
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border: 1px solid var(--color-orange);
+  border-radius: 6px;
+  background: var(--color-orange);
+  color: #05070d;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pwa-update-notice button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 560px) {
+  .pwa-update-notice {
+    right: 16px;
+    bottom: 16px;
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

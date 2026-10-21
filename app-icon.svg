@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Estudio Inteligente 2.0</title>
+  <rect width="512" height="512" rx="96" fill="#060911"/>
+  <circle cx="256" cy="256" r="204" fill="#000000" stroke="#FF5E00" stroke-width="20"/>
+  <text x="256" y="318" fill="#FF5E00" font-family="Montserrat, Arial, sans-serif" font-size="176" font-weight="700" text-anchor="middle">
+    MG
+  </text>
+</svg>

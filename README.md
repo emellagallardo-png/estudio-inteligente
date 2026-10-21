@@ -78,8 +78,9 @@
 ---
 
 ## 4. INSTALACIÓN Y EJECUCIÓN
-* **Ejecución Local Rápida:** Abrir directamente el archivo `index.html` en Google Chrome, Microsoft Edge o en el navegador de tu Xiaomi Redmi Note 13 Pro 5G.
-* **Modo PWA (Instalar en Pantalla de Inicio):** En Chrome, pulsar en el icono de instalación en la barra de direcciones o menú *"Instalar aplicación ESTUDIO INTELIGENTE 2.0"*.
+* **Vista Local Rápida:** Abrir `index.html` permite revisar la interfaz, pero el Service Worker y el modo offline no funcionan bajo `file://`.
+* **Ejecución PWA Local:** Desde esta carpeta, ejecutar `python -m http.server 8080` y abrir `http://localhost:8080` en Chrome o Edge.
+* **Instalación en Pantalla de Inicio:** Con la aplicación servida mediante HTTPS (o `localhost`), usar el icono de instalación del navegador o la opción *"Instalar aplicación ESTUDIO INTELIGENTE 2.0"*.
 
 ---
 `[MG] MEGA INSPECCIÓN · CONSULTORÍA TÉCNICA INTELIGENTE [ITO]`

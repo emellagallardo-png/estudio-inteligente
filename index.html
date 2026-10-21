@@ -11,15 +11,15 @@
   <meta name="theme-color" content="#060911">
   
   <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23000' stroke='%23FF5E00' stroke-width='4'/><text x='50' y='62' font-size='38' font-family='Montserrat, sans-serif' font-weight='600' fill='%23FF5E00' text-anchor='middle'>MG</text></svg>">
+  <link rel="manifest" href="./manifest.json?v=2026.10.21.1">
+  <link rel="icon" type="image/svg+xml" href="./app-icon.svg">
   
   <!-- Google Fonts: Montserrat & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="./styles.css?v=2026.10.21.1">
 </head>
 <body class="dark-luxury">
 
@@ -936,7 +936,16 @@
     </div>
   </footer>
 
-  <script src="security.js"></script>
-  <script src="app.js"></script>
+  <aside class="pwa-update-notice hidden" id="pwa-update-notice" role="status" aria-live="polite">
+    <div>
+      <strong>Nueva versión disponible</strong>
+      <span>Actualiza para cargar las mejoras más recientes.</span>
+    </div>
+    <button type="button" id="pwa-update-action">Actualizar ahora</button>
+  </aside>
+
+  <script src="./security.js?v=2026.10.21.1" defer></script>
+  <script src="./app.js?v=2026.10.21.1" defer></script>
+  <script src="./pwa.js?v=2026.10.21.1" defer></script>
 </body>
 </html>
