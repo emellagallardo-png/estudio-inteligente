@@ -4,3 +4,7 @@ scratch/
 *.log
 Thumbs.db
 desktop.ini
+.vscode/
+*.gdoc
+ENTREGA_RECONSTRUCCION_ESTUDIO_2.0/
+
