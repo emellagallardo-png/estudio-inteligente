@@ -22,8 +22,8 @@
 
 | Fase | Descripción del Hito | Estado Actual | Archivos Involucrados | Responsable / Motor Activo |
 | :---: | :--- | :---: | :--- | :---: |
-| **Fase 1** | **Gobernanza y Línea Base:** Normalizar Git, fijar versión de Antigravity como fuente canónica y aislar backups v3. | `[LISTO PARA INICIAR]` | `.git`, inventario de archivos | Claude Sonnet 4.6 / MEGA 2.0 |
-| **Fase 2** | **Contención de Seguridad:** Eliminar API Keys de `localStorage`, erradicar `innerHTML` vulnerables (XSS) e implementar CSP. | `[PENDIENTE]` | `/src/security.js`, `index.html` | Por asignar |
+| **Fase 1** | **Gobernanza y Línea Base:** Normalizar Git, fijar versión de Antigravity como fuente canónica, aislar backups v3 y crear rama de aislamiento `refactor-v2-modular`. | `[COMPLETADA 100%]` | `.git`, `.gitignore`, `ESTADO_ACTUAL_RECONSTRUCCION.md` | Claude Sonnet 4.6 / MEGA 2.0 |
+| **Fase 2** | **Contención de Seguridad:** Eliminar API Keys de `localStorage`, erradicar `innerHTML` vulnerables (XSS) e implementar sanitización/CSP. | `[LISTO PARA INICIAR]` | `app.js`, `index.html`, `/src/security.js` | Claude Sonnet 4.6 / MEGA 2.0 |
 | **Fase 3** | **Arquitectura Modular & PWA Real:** Desacoplar código inline, enlazar `manifest.json` y registrar `sw.js` network-first. | `[PENDIENTE]` | `index.html`, `styles.css`, `sw.js` | Por asignar |
 | **Fase 4** | **Capa Documental Verificable:** Corpus normativo con hash, cita de normas NCh/OGUC y control de abstención estricto. | `[PENDIENTE]` | `/src/corpus.js` | Por asignar |
 | **Fase 5** | **Conexión Gemini Segura & Agentes Reales:** Proxy seguro para API Keys con salida estructurada JSON (OMEN, ATLAS, ITO). | `[PENDIENTE]` | `/src/gemini-client.js` | Por asignar |
