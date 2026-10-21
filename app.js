@@ -430,67 +430,103 @@ function nextAstraStep() {
 // --------------------------------------------------------------------------
 // 5. VALIDADOR FEYNMAN INVERSO & RADAR DE ERRORES (POTENCIADO POR GEMINI 2.0)
 // --------------------------------------------------------------------------
+function appendAuditList(parent, title, items, color) {
+  const section = document.createElement('section');
+  section.style.marginTop = '12px';
+
+  const heading = document.createElement('strong');
+  heading.style.color = color;
+  heading.textContent = title;
+  section.appendChild(heading);
+
+  const list = document.createElement('ul');
+  list.style.margin = '7px 0 0';
+  (items || []).forEach((item) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = item;
+    list.appendChild(listItem);
+  });
+  section.appendChild(list);
+  parent.appendChild(section);
+}
+
+function renderStructuredAudit(container, result, compact = false) {
+  if (!container || !result) return;
+  container.replaceChildren();
+
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px;';
+  const status = document.createElement('strong');
+  status.style.color = result.verified ? '#10B981' : '#F59E0B';
+  status.textContent = result.verified ? '✓ EVIDENCIA NORMATIVA VERIFICADA' : '⚠ ABSTENCIÓN NORMATIVA ACTIVA';
+  const score = document.createElement('span');
+  score.style.cssText = 'font-family:var(--font-mono);font-weight:700;color:var(--color-cyan);';
+  score.textContent = `${result.concept_score}%`;
+  header.append(status, score);
+  container.appendChild(header);
+
+  appendAuditList(container, 'ASPECTOS CORRECTOS', result.correct_aspects, '#10B981');
+  appendAuditList(container, 'LAGUNAS Y OMISIONES', result.gaps_and_omissions, '#EF4444');
+
+  const citation = document.createElement('section');
+  citation.style.cssText = 'margin-top:12px;padding:10px;border-left:3px solid #FF5E00;background:rgba(255,94,0,.07);white-space:pre-wrap;';
+  const citationTitle = document.createElement('strong');
+  citationTitle.style.color = '#FF5E00';
+  citationTitle.textContent = 'RESPALDO NORMATIVO';
+  const citationText = document.createElement('div');
+  citationText.style.marginTop = '5px';
+  citationText.textContent = result.normative_citation;
+  citation.append(citationTitle, citationText);
+  container.appendChild(citation);
+
+  const triad = document.createElement('section');
+  triad.style.cssText = compact
+    ? 'margin-top:12px;display:grid;gap:6px;'
+    : 'margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;';
+  [['OMEN', result.triada_verdict.omen], ['ATLAS', result.triada_verdict.atlas], ['ITO', result.triada_verdict.ito]]
+    .forEach(([agent, verdict]) => {
+      const card = document.createElement('div');
+      card.style.cssText = 'padding:9px;border:1px solid var(--border-subtle);border-radius:6px;background:rgba(15,23,42,.55);';
+      const agentName = document.createElement('strong');
+      agentName.style.color = 'var(--color-cyan)';
+      agentName.textContent = `${agent}: `;
+      const verdictText = document.createElement('span');
+      verdictText.textContent = verdict;
+      card.append(agentName, verdictText);
+      triad.appendChild(card);
+    });
+  container.appendChild(triad);
+}
+
+function renderGeminiLoading(container, message) {
+  if (!container) return;
+  const loading = document.createElement('div');
+  loading.style.cssText = 'padding:16px;text-align:center;color:var(--color-cyan);font-family:var(--font-mono);font-size:12px;border:1px solid var(--color-cyan);border-radius:8px;';
+  loading.textContent = message;
+  container.replaceChildren(loading);
+}
+
 async function evaluateFeynmanExplanation() {
-  const text = document.getElementById('feynman-user-input').value;
+  const text = document.getElementById('feynman-user-input').value.trim();
   if (!text || text.length < 20) {
     alert('Por favor redacta una explicación con mayor detalle para poder ejecutar la radiografía conceptual.');
     return;
   }
 
   const markupBox = document.getElementById('feynman-analyzed-markup');
-  const apiKey = localStorage.getItem('mega_ai_studio_key');
   const activeSubject = ACADEMIC_DATABASE[AppState.activeSubject] || { name: 'Construcción' };
 
-  if (apiKey) {
-    markupBox.innerHTML = `
-      <div style="padding: 16px; text-align: center; color: var(--color-cyan); font-family: var(--font-mono); font-size: 12px; background: rgba(0, 240, 255, 0.05); border: 1px solid var(--color-cyan); border-radius: 8px;">
-        <span class="live-dot" style="background: var(--color-cyan); animation: pulse 1s infinite; margin-right: 6px;"></span>
-        Auditando con Gemini 2.0 Flash (Tríada OMEN AG-41 + ATLAS + ITO AUDITOR)...
-      </div>
-    `;
-
-    try {
-      const prompt = `Asignatura: ${activeSubject.name}. Explicación técnica del alumno (CEO J. Esteban Mella Gallardo): "${text}". Analiza esta explicación pericial. Valida lo correcto con etiquetas <span class="tag-green">[OK: ...]</span> y resalta en ROJO o con etiquetas 🚨 cualquier laguna conceptual, omisión normativa chilena (NCh170, OGUC, RIDAA, MOP Vol. 5) o tolerancias de obra. Sé riguroso y doctoral.`;
-      const systemInstruction = `Eres la Tríada Pericial de MEGA INSPECCIÓN SpA: OMEN AG-41 (Doctor en Ciencias de la Ingeniería), ATLAS (Especialista en Normativa Chilena OGUC/NCh/RIDAA) e ITO AUDITOR (Jefe de Terreno y Administrador de Contratos). Entrega un análisis didáctico de alto impacto en formato HTML semántico con etiquetas <span class="tag-green">[OK: ...]</span> para aciertos y <div class="gap-alert-box"><strong style="color: #EF4444;">🚨 LAGUNAS CONCEPTUALES DETECTADAS:</strong><ul><li>...</li></ul></div> para los errores. No uses bloques markdown envolventes, solo HTML nativo directo.`;
-
-      const aiResponse = await callGeminiApi(prompt, systemInstruction);
-      if (aiResponse) {
-        // Limpiar posibles delimitadores markdown ```html si el modelo los envía
-        const cleaned = aiResponse.replace(/```html/gi, '').replace(/```/g, '').trim();
-        markupBox.innerHTML = cleaned;
-        playSuccessChime();
-        return;
-      }
-    } catch (err) {
-      console.warn('Fallo en llamada a Gemini, recurriendo a matriz local pericial:', err);
-    }
-  }
-
-  // Fallback a matriz local pericial con validación en CorpusEngine (Fase 4)
-  let normativeBadge = '';
-  if (typeof CorpusEngine !== 'undefined') {
-    const claimCheck = CorpusEngine.verifyClaim(text);
-    if (claimCheck.verified) {
-      normativeBadge = CorpusEngine.formatCitationBadge(claimCheck.citation);
-    } else {
-      normativeBadge = `<div class="abstain-box" style="margin-top:8px; padding:10px; background:rgba(239,68,68,0.1); border:1px dashed #EF4444; border-radius:4px; font-size:11px; color:#FCA5A5;">${claimCheck.message}</div>`;
-    }
-  }
-
-  markupBox.innerHTML = `
-    "${escapeHTML(text.slice(0, 150))}..." <span class="tag-green">[OK: Estructura general coherente]</span>.
-    ${normativeBadge}
-    <div class="gap-alert-box" style="margin-top: 10px;">
-      <strong style="color: #EF4444;">🚨 RADIOGRAFÍA DE LAGUNAS CONCEPTUALES EN TIEMPO REAL:</strong>
-      <ul>
-        <li><span class="text-red">Omisión de Tolerancias:</span> No especificaste los milímetros máximos de tolerancia permitidos según la NCh aplicable.</li>
-        <li><span class="text-red">Protocolo de Ensayo:</span> Omitiste indicar qué laboratorio certificado debe contrastar las probetas o testigos de control según NCh170 / NCh1998.</li>
-      </ul>
-    </div>
-  `;
-
-  // Efecto auditivo sutil
-  console.log('[OMEN Feynman]: Radiografía de errores completada (Modo Local).');
+  renderGeminiLoading(markupBox, 'Auditando con la Tríada OMEN + ATLAS + ITO...');
+  const systemInstruction = [
+    'Evalúa la explicación mediante técnica Feynman.',
+    'Distingue aciertos demostrables, lagunas conceptuales y acciones verificables en terreno.',
+    'No valides ninguna cita que no esté contenida en la evidencia normativa inyectada.'
+  ].join(' ');
+  const context = `${activeSubject.name || 'Construcción'} · ${activeSubject.lessonTitle || 'Partida en estudio'}`;
+  const result = await callGeminiApi(text, systemInstruction, context);
+  renderStructuredAudit(markupBox, result);
+  if (result.concept_score >= 70) playSuccessChime();
+  console.log('[OMEN Feynman]: Radiografía estructurada completada.');
 }
 
 function showFeynmanReview() {
@@ -828,7 +864,7 @@ function changePdfPage(delta) {
   alert('Navegando entre páginas del PDF.');
 }
 
-function sendPdfChatMessage() {
+async function sendPdfChatMessage() {
   const input = document.getElementById('pdf-chat-input');
   const text = input.value.trim();
   if (!text) return;
@@ -854,17 +890,23 @@ function sendPdfChatMessage() {
 
   input.value = '';
 
-  // Respuesta OMEN
-  setTimeout(() => {
-    const aiDiv = document.createElement('div');
-    aiDiv.className = 'chat-msg ai-msg';
-    aiDiv.innerHTML = `
-      <div class="msg-sender">OMEN AG-41</div>
-      <div class="msg-text">Excelente consulta, Esteban. En relación a la página actual de tu apunte, el artículo de la NCh430 estipula que las barras longitudinales en zonas críticas deben mantener un traslape alternado no menor a 60 diámetros de barra para evitar concentración de tensiones.</div>
-    `;
-    container.appendChild(aiDiv);
-    container.scrollTop = container.scrollHeight;
-  }, 600);
+  const aiDiv = document.createElement('div');
+  aiDiv.className = 'chat-msg ai-msg';
+  container.appendChild(aiDiv);
+  renderGeminiLoading(aiDiv, 'OMEN y ATLAS contrastan la consulta con el corpus...');
+  container.scrollTop = container.scrollHeight;
+
+  const activeSubject = ACADEMIC_DATABASE[AppState.activeSubject] || { name: 'Construcción' };
+  const context = `${activeSubject.name || 'Construcción'} · ${activeSubject.lessonTitle || 'Documento en revisión'}`;
+  const systemInstruction = [
+    'Responde la consulta socrática sobre el documento o partida activa.',
+    'Separa comprensión conceptual, evidencia normativa y acción concreta del ITO.',
+    'Si el corpus no respalda la afirmación, abstente expresamente.'
+  ].join(' ');
+  const result = await callGeminiApi(text, systemInstruction, context);
+
+  renderStructuredAudit(aiDiv, result, true);
+  container.scrollTop = container.scrollHeight;
 }
 
 function openFolioTemplate(subject) {
@@ -1180,18 +1222,16 @@ function downloadIcsCalendar() {
 }
 
 // --------------------------------------------------------------------------
-// 15. INTEGRACIÓN DIRECTA GOOGLE AI STUDIO (GEMINI 2.0 FLASH & 1.5 PRO)
+// 15. INTEGRACIÓN GOOGLE AI STUDIO (GEMINI 2.0 FLASH & 1.5 FLASH)
 // --------------------------------------------------------------------------
 function openAiStudioModal() {
   const modal = document.getElementById('modal-ai-studio');
   if (modal) {
     modal.classList.remove('hidden');
-    const savedKey = localStorage.getItem('mega_ai_studio_key') || '';
-    const savedModel = localStorage.getItem('mega_ai_model') || 'gemini-3.8-flash';
     const keyInput = document.getElementById('input-ai-api-key');
     const modelSelect = document.getElementById('select-ai-model');
-    if (keyInput) keyInput.value = savedKey;
-    if (modelSelect) modelSelect.value = savedModel;
+    if (keyInput) keyInput.value = '';
+    if (modelSelect) modelSelect.value = SecureVault.getModel();
     checkAiStudioStatus();
   }
 }
@@ -1241,8 +1281,8 @@ async function saveAndTestAiStudioKey() {
   const modelSelect = document.getElementById('select-ai-model');
   const resultBox = document.getElementById('ai-test-result');
 
-  const key = keyInput.value.trim();
-  const model = modelSelect.value;
+  const key = keyInput?.value.trim() || '';
+  const model = modelSelect?.value || 'gemini-2.0-flash';
 
   if (!key || key.length < 15) {
     alert('Por favor ingrese una API Key válida de Google AI Studio.');
@@ -1253,60 +1293,28 @@ async function saveAndTestAiStudioKey() {
   resultBox.style.background = 'rgba(0, 240, 255, 0.1)';
   resultBox.style.border = '1px solid var(--color-cyan)';
   resultBox.style.color = 'var(--color-cyan)';
-  // SECURITY FIX (Fase 2): texto fijo de sistema — no contiene entrada de usuario
-  resultBox.textContent = `⚡ Probando comunicación segura con Google AI Studio (${escapeHTML(model)})...`;
+  resultBox.textContent = `⚡ Probando comunicación segura con Google AI Studio (${model})...`;
 
   try {
-    // SECURITY FIX (Fase 2): URL con key en header Authorization sería ideal,
-    // pero Gemini REST requiere query param. La key no sale del script.
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-    const payload = {
-      contents: [
-        {
-          parts: [
-            { text: "Hola Gemini, soy el CEO J. Esteban Mella Gallardo. Responde en 1 sola frase corta confirmando conexión pericial exitosa con MEGA INSPECCIÓN SpA e ITO Inteligente 2.0." }
-          ]
-        }
-      ]
-    };
+    const result = await GeminiClient.testConnection(key, model);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
-      resultBox.style.border = '1px solid #EF4444';
-      resultBox.style.color = '#EF4444';
-      // SECURITY FIX (Fase 2): sanitizar el mensaje de error de la API
-      resultBox.textContent = `❌ Error de Google AI Studio: ${data.error.message || 'Clave inválida o sin permisos'}`;
-      return;
-    }
-
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Conexión verificada con éxito.';
-
-    // SECURITY FIX (Fase 2): guardar en SecureVault (memoria), NO en localStorage
     SecureVault.setKey(key);
     SecureVault.setModel(model);
-    keyInput.value = ''; // limpiar el input inmediatamente por seguridad
+    keyInput.value = '';
 
     resultBox.style.background = 'rgba(16, 185, 129, 0.15)';
     resultBox.style.border = '1px solid #10B981';
     resultBox.style.color = '#10B981';
-    // SECURITY FIX (Fase 2): reply de la API se muestra con textContent en span dedicado
-    resultBox.innerHTML = '';
-    const successMsg = document.createElement('span');
-    successMsg.innerHTML = '<strong>✅ ¡CONEXIÓN EXITOSA CON GEMINI!</strong><br>';
+    resultBox.replaceChildren();
+    const successMsg = document.createElement('strong');
+    successMsg.textContent = '✅ ¡CONEXIÓN ESTRUCTURADA EXITOSA CON GEMINI!';
     const replyEl = document.createElement('em');
-    replyEl.textContent = `«${reply.trim()}»`; // sanitizado con textContent
+    replyEl.textContent = result.triada_verdict.omen;
     const noteEl = document.createElement('span');
     noteEl.style.cssText = 'font-size: 10px; color: #FFF;';
     noteEl.textContent = 'Clave activa en sesión segura. La Tríada ya tiene cerebro autónomo activo.';
     resultBox.appendChild(successMsg);
+    resultBox.appendChild(document.createElement('br'));
     resultBox.appendChild(replyEl);
     resultBox.appendChild(document.createElement('br'));
     resultBox.appendChild(noteEl);
@@ -1317,8 +1325,7 @@ async function saveAndTestAiStudioKey() {
     resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
     resultBox.style.border = '1px solid #EF4444';
     resultBox.style.color = '#EF4444';
-    // SECURITY FIX (Fase 2): err.message es interno del navegador — seguro con textContent
-    resultBox.textContent = `❌ Error de red o CORS al contactar Google AI Studio: ${err.message}`;
+    resultBox.textContent = `❌ No fue posible validar Google AI Studio: ${err.message}`;
   }
 }
 
@@ -1335,36 +1342,8 @@ function clearAiStudioKey() {
   }
 }
 
-async function callGeminiApi(prompt, systemInstruction = '') {
-  // SECURITY FIX (Fase 2): leer desde SecureVault (memoria), NO desde localStorage
-  const key = SecureVault.getKey();
-  const model = SecureVault.getModel();
-  if (!key) return null;
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-  const payload = {
-    contents: [{ parts: [{ text: prompt }] }]
-  };
-
-  if (systemInstruction) {
-    payload.systemInstruction = {
-      parts: [{ text: systemInstruction }]
-    };
-  }
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  const json = await res.json();
-  if (json.error) {
-    console.error('Gemini API Error:', json.error);
-    return null;
-  }
-
-  return json.candidates?.[0]?.content?.parts?.[0]?.text || null;
+async function callGeminiApi(prompt, systemInstruction = '', context = '') {
+  return GeminiClient.analyze({ prompt, systemInstruction, context });
 }
 
 // --------------------------------------------------------------------------
@@ -1390,5 +1369,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('🏛️ [ESTUDIO INTELIGENTE 2.0]: Suite Cognitiva Personal cargada y operativa al 100%.');
 });
-
-

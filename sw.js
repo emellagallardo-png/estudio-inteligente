@@ -14,6 +14,7 @@ const PRECACHE_ASSETS = [
   './styles.css?v=2026.10.21.1',
   './security.js?v=2026.10.21.1',
   './src/corpus.js?v=2026.10.21.1',
+  './src/gemini-client.js?v=2026.10.21.1',
   './app.js?v=2026.10.21.1',
   './pwa.js?v=2026.10.21.1',
   './app-icon.svg'
