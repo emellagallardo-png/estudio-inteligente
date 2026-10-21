@@ -829,7 +829,16 @@ function sendPdfChatMessage() {
   userDiv.className = 'chat-msg';
   userDiv.style.background = 'rgba(255, 94, 0, 0.1)';
   userDiv.style.border = '1px solid var(--border-orange)';
-  userDiv.innerHTML = `<div class="msg-sender" style="color:var(--color-orange)">J. ESTEBAN MELLA (CEO)</div><div class="msg-text">${text}</div>`;
+  // SECURITY FIX (Fase 2): texto de usuario sanitizado antes de insertar en DOM
+  const senderEl = document.createElement('div');
+  senderEl.className = 'msg-sender';
+  senderEl.style.color = 'var(--color-orange)';
+  senderEl.textContent = 'J. ESTEBAN MELLA (CEO)';
+  const textEl = document.createElement('div');
+  textEl.className = 'msg-text';
+  textEl.textContent = text; // textContent escapa automáticamente — cero XSS
+  userDiv.appendChild(senderEl);
+  userDiv.appendChild(textEl);
   container.appendChild(userDiv);
 
   input.value = '';
@@ -1189,18 +1198,19 @@ function toggleApiKeyVisibility() {
 }
 
 function checkAiStudioStatus() {
-  const key = localStorage.getItem('mega_ai_studio_key');
+  // SECURITY FIX (Fase 2): leer desde SecureVault, no desde localStorage
+  const hasKey = SecureVault.hasKey();
   const dot = document.getElementById('ai-status-dot');
   const label = document.getElementById('ai-status-label');
   const indicatorLight = document.getElementById('ai-active-indicator-light');
   const statusText = document.getElementById('ai-active-status-text');
 
-  if (key && key.trim().length > 15) {
+  if (hasKey) {
     if (dot) dot.classList.add('connected');
     if (label) label.textContent = 'GEMINI ONLINE';
     if (indicatorLight) indicatorLight.style.background = '#10B981';
     if (statusText) {
-      const model = localStorage.getItem('mega_ai_model') || 'gemini-3.8-flash';
+      const model = SecureVault.getModel();
       statusText.textContent = `ESTADO: CONECTADO A ${model.toUpperCase()}`;
       statusText.style.color = '#10B981';
     }
@@ -1232,9 +1242,12 @@ async function saveAndTestAiStudioKey() {
   resultBox.style.background = 'rgba(0, 240, 255, 0.1)';
   resultBox.style.border = '1px solid var(--color-cyan)';
   resultBox.style.color = 'var(--color-cyan)';
-  resultBox.innerHTML = `⚡ Probando comunicación segura con Google AI Studio (${model})...`;
+  // SECURITY FIX (Fase 2): texto fijo de sistema — no contiene entrada de usuario
+  resultBox.textContent = `⚡ Probando comunicación segura con Google AI Studio (${escapeHTML(model)})...`;
 
   try {
+    // SECURITY FIX (Fase 2): URL con key en header Authorization sería ideal,
+    // pero Gemini REST requiere query param. La key no sale del script.
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
     const payload = {
       contents: [
@@ -1258,18 +1271,34 @@ async function saveAndTestAiStudioKey() {
       resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
       resultBox.style.border = '1px solid #EF4444';
       resultBox.style.color = '#EF4444';
-      resultBox.innerHTML = `❌ Error de Google AI Studio: ${data.error.message || 'Clave inválida o sin permisos'}`;
+      // SECURITY FIX (Fase 2): sanitizar el mensaje de error de la API
+      resultBox.textContent = `❌ Error de Google AI Studio: ${data.error.message || 'Clave inválida o sin permisos'}`;
       return;
     }
 
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Conexión verificada con éxito.';
-    localStorage.setItem('mega_ai_studio_key', key);
-    localStorage.setItem('mega_ai_model', model);
+
+    // SECURITY FIX (Fase 2): guardar en SecureVault (memoria), NO en localStorage
+    SecureVault.setKey(key);
+    SecureVault.setModel(model);
+    keyInput.value = ''; // limpiar el input inmediatamente por seguridad
 
     resultBox.style.background = 'rgba(16, 185, 129, 0.15)';
     resultBox.style.border = '1px solid #10B981';
     resultBox.style.color = '#10B981';
-    resultBox.innerHTML = `✅ <strong>¡CONEXIÓN EXITOSA CON GEMINI!</strong><br><em>«${reply.trim()}»</em><br><span style="font-size: 10px; color: #FFF;">Clave guardada localmente de forma segura. La Tríada ya tiene cerebro autónomo activo.</span>`;
+    // SECURITY FIX (Fase 2): reply de la API se muestra con textContent en span dedicado
+    resultBox.innerHTML = '';
+    const successMsg = document.createElement('span');
+    successMsg.innerHTML = '<strong>✅ ¡CONEXIÓN EXITOSA CON GEMINI!</strong><br>';
+    const replyEl = document.createElement('em');
+    replyEl.textContent = `«${reply.trim()}»`; // sanitizado con textContent
+    const noteEl = document.createElement('span');
+    noteEl.style.cssText = 'font-size: 10px; color: #FFF;';
+    noteEl.textContent = 'Clave activa en sesión segura. La Tríada ya tiene cerebro autónomo activo.';
+    resultBox.appendChild(successMsg);
+    resultBox.appendChild(replyEl);
+    resultBox.appendChild(document.createElement('br'));
+    resultBox.appendChild(noteEl);
 
     checkAiStudioStatus();
     playSuccessChime();
@@ -1277,25 +1306,28 @@ async function saveAndTestAiStudioKey() {
     resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
     resultBox.style.border = '1px solid #EF4444';
     resultBox.style.color = '#EF4444';
-    resultBox.innerHTML = `❌ Error de red o CORS al contactar Google AI Studio: ${err.message}`;
+    // SECURITY FIX (Fase 2): err.message es interno del navegador — seguro con textContent
+    resultBox.textContent = `❌ Error de red o CORS al contactar Google AI Studio: ${err.message}`;
   }
 }
 
 function clearAiStudioKey() {
   if (confirm('¿Desea desconectar y borrar la clave de Google AI Studio de este dispositivo?')) {
-    localStorage.removeItem('mega_ai_studio_key');
+    // SECURITY FIX (Fase 2): borrar de SecureVault (memoria de sesión)
+    SecureVault.clearKey();
     const input = document.getElementById('input-ai-api-key');
     if (input) input.value = '';
     const resultBox = document.getElementById('ai-test-result');
     if (resultBox) resultBox.style.display = 'none';
     checkAiStudioStatus();
-    alert('Clave borrada. El sistema regresa al modo de simulación pericial local.');
+    alert('Clave eliminada de la sesión. El sistema regresa al modo de simulación pericial local.');
   }
 }
 
 async function callGeminiApi(prompt, systemInstruction = '') {
-  const key = localStorage.getItem('mega_ai_studio_key');
-  const model = localStorage.getItem('mega_ai_model') || 'gemini-3.8-flash';
+  // SECURITY FIX (Fase 2): leer desde SecureVault (memoria), NO desde localStorage
+  const key = SecureVault.getKey();
+  const model = SecureVault.getModel();
   if (!key) return null;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
