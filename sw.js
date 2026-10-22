@@ -17,6 +17,8 @@ const PRECACHE_ASSETS = [
   './src/gemini-client.js?v=2.0.0-PROD',
   './src/fsrs.js?v=2.0.0-PROD',
   './src/pdf-viewer.js?v=2.0.0-PROD',
+  './src/curriculum.js?v=2.0.0-PROD',
+  './src/reference-ui.js?v=2.0.0-PROD',
   './app.js?v=2.0.0-PROD',
   './pwa.js?v=2.0.0-PROD',
   './app-icon.svg',

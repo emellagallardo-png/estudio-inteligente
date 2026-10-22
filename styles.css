@@ -2715,3 +2715,423 @@ body.sunlight-mode {
   :focus-visible { outline: 3px solid Highlight !important; box-shadow: none !important; }
   button, [role="button"], input, select, textarea { border: 1px solid ButtonText; }
 }
+
+/* ==========================================================================
+   RESTITUCIÓN VISUAL: COMPONENTES DE REFERENCIA & DARK TITANIUM
+   Barra de Acceso Rápido, Asignaturas, Módulos 01-06 y Fórmulas
+   ========================================================================== */
+body.reference-layout .academic-sidebar {
+  display: none !important;
+}
+
+body.reference-layout .workspace-viewport {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Barra de Plataformas Rápidas */
+.reference-platforms {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.reference-platforms h2 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.reference-platform-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reference-platform-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.reference-platform-links a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.reference-platform-links a span:first-child {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.reference-platform-links a span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.reference-platform-links a strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.reference-platform-links a small {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.reference-platform-links a[href*="iplacex"] {
+  border-color: rgba(255, 94, 0, 0.5);
+}
+.reference-platform-links a[href*="iplacex"]:hover {
+  background: rgba(255, 94, 0, 0.12);
+  border-color: var(--color-orange);
+}
+
+.reference-platform-links a[href*="diplomadosuc"] {
+  border-color: rgba(2, 132, 199, 0.5);
+}
+.reference-platform-links a[href*="diplomadosuc"]:hover {
+  background: rgba(2, 132, 199, 0.12);
+  border-color: #0284c7;
+}
+
+.reference-platform-links a[href*="coursera.org/learn"] {
+  border-color: rgba(37, 99, 235, 0.5);
+}
+.reference-platform-links a[href*="coursera.org/learn"]:hover {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: #2563eb;
+}
+
+.reference-platform-links a[href="https://www.coursera.org"] {
+  border-color: rgba(16, 185, 129, 0.5);
+}
+.reference-platform-links a[href="https://www.coursera.org"]:hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10b981;
+}
+
+/* Selector de Asignaturas */
+.reference-academic {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+}
+
+#reference-subjects {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reference-subject {
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.reference-subject:hover {
+  border-color: var(--border-orange);
+  color: var(--text-primary);
+}
+
+.reference-subject[aria-pressed="true"] {
+  background: var(--color-orange) !important;
+  color: #000000 !important;
+  border-color: var(--color-orange) !important;
+  box-shadow: 0 0 16px var(--color-orange-glow) !important;
+}
+
+.reference-subject[aria-pressed="true"] strong,
+.reference-subject[aria-pressed="true"] span {
+  color: #000000 !important;
+}
+
+.reference-org {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+}
+
+.org-iplacex { color: #FF5E00; }
+.org-uc { color: #38bdf8; }
+.org-global { color: #c084fc; }
+
+.reference-mode {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+#reference-mode-label {
+  color: var(--color-cyan);
+}
+
+/* Selector de Módulos (01 al 06) */
+.reference-modules {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+
+.reference-modules strong {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+#reference-module-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.reference-module {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 56px;
+}
+
+.reference-module:hover:not(:disabled) {
+  border-color: rgba(0, 240, 255, 0.4);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.reference-module:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.reference-module[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(255, 94, 0, 0.22), rgba(255, 94, 0, 0.08)) !important;
+  border: 1.5px solid var(--color-orange) !important;
+  box-shadow: 0 0 16px var(--color-orange-glow) !important;
+}
+
+.reference-module-number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-orange);
+  letter-spacing: 0.08em;
+}
+
+.reference-module-title {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+/* Pantalla de Bienvenida de Referencia */
+.reference-welcome {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 56px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.reference-welcome.hidden {
+  display: none !important;
+}
+
+.reference-welcome-icon {
+  font-size: 52px;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+
+.reference-welcome h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.reference-welcome h2 span {
+  color: var(--color-orange);
+}
+
+.reference-welcome p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  max-width: 580px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.reference-welcome-hint {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  font-family: var(--font-mono);
+}
+
+.reference-welcome-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.reference-crunch {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* Fórmulas y Cajas Especiales de la Tríada */
+.formula-card, .formula-block {
+  background: #04060a;
+  border: 1px dashed var(--color-purple);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: #d8b4fe;
+  text-align: center;
+  margin: 12px 0;
+}
+
+.field-alert, .field-warning-box {
+  background: rgba(239, 68, 68, 0.12);
+  border-left: 4px solid #ef4444;
+  border-radius: 4px;
+  padding: 10px 14px;
+  color: #fca5a5;
+  font-size: 12.5px;
+  margin: 10px 0;
+}
+
+.norm-checklist, .normative-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.norm-checklist li, .normative-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.key-takeaway {
+  background: rgba(0, 240, 255, 0.08);
+  border-left: 4px solid var(--color-cyan);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  color: #e0f2fe;
+  font-size: 13px;
+}
+
+.takeaway-label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10.5px;
+  color: var(--color-cyan);
+  display: block;
+  margin-bottom: 4px;
+  letter-spacing: 0.08em;
+}
+
+.reference-tools {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+
+.reference-tools summary {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  outline: none;
+}
+
+.reference-session-actions {
+  display: inline-flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.reference-copy {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .reference-platforms { flex-direction: column; align-items: flex-start; }
+  .reference-welcome { padding: 36px 18px; }
+  .reference-welcome h2 { font-size: 20px; }
+  #reference-module-buttons { grid-template-columns: 1fr 1fr; }
+}

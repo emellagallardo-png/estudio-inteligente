@@ -7,7 +7,7 @@ const GeminiClient = (() => {
   'use strict';
 
   const API_ROOT = 'https://generativelanguage.googleapis.com/v1beta/models';
-  const TIMEOUT_MS = 8000;
+  const TIMEOUT_MS = 25000;
   const DEFAULT_MODEL = 'gemini-2.0-flash';
   const COMPATIBILITY_MODEL = 'gemini-flash-latest';
   const SUPPORTED_MODELS = new Set(['gemini-2.0-flash', 'gemini-1.5-flash']);

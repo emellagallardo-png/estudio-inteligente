@@ -20,8 +20,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="./styles.css?v=2.0.0-PROD">
+  <!-- KaTeX para renderizado matemático impecable de fórmulas de física y cálculo -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
-<body class="dark-luxury">
+<body class="dark-luxury reference-layout">
   <a class="skip-link" href="#study-session-view">Saltar al contenido de estudio</a>
 
   <!-- ======================================================== -->
@@ -42,6 +46,7 @@
 
     <!-- Telemetría Central: Panacea Watchdog & Streak -->
     <div class="header-center">
+      <button type="button" class="btn-secondary reference-english" onclick="openDuolingoModal()">🇬🇧 INGLÉS CONTECH</button>
       <div class="telemetry-pill sentinel-pill" title="Protección de Datos & Auto-Guardado Activo">
         <span class="live-dot green-pulse"></span>
         <span class="pill-label">PANACEA:</span>
@@ -100,6 +105,33 @@
   <!-- 2. LAYOUT PRINCIPAL: DASHBOARD DUAL SPLIT-SCREEN         -->
   <!-- ======================================================== -->
   <main class="main-container" id="app-workspace">
+    <section class="reference-platforms" aria-label="Acceso rápido a plataformas">
+      <h2>ACCESO RÁPIDO:</h2>
+      <div class="reference-platform-links">
+        <a href="https://aulavirtual.iplacex.cl/ultra/institution-page" target="_blank" rel="noopener noreferrer"><span>🎓</span><span><strong>IPLACEX</strong><small>Aula Virtual Ultra</small></span></a>
+        <a href="https://escritorio.diplomadosuc.cl/front/miscursos/malla/par_id_alumno/-1" target="_blank" rel="noopener noreferrer"><span>🏛️</span><span><strong>UC DIPLOMADO</strong><small>Mis Cursos &amp; Malla</small></span></a>
+        <a href="https://www.coursera.org/learn/generative-ai-with-llms" target="_blank" rel="noopener noreferrer"><span>📡</span><span><strong>COURSERA IA</strong><small>IA Generativa Google</small></span></a>
+        <a href="https://www.coursera.org" target="_blank" rel="noopener noreferrer"><span>🏗️</span><span><strong>COURSERA CONSTRUC.</strong><small>IA Aplicada Construcción</small></span></a>
+      </div>
+    </section>
+    <section class="reference-academic" aria-label="Asignaturas">
+      <div id="reference-subjects"></div>
+      <p class="reference-mode">MODO: <strong id="reference-mode-label">SIN MÓDULO ACTIVO</strong></p>
+    </section>
+    <section class="reference-modules" aria-label="Seleccionar módulo">
+      <strong>SELECCIONAR MÓDULO:</strong><div id="reference-module-buttons"></div>
+    </section>
+    <section id="reference-welcome" class="reference-welcome">
+      <div class="reference-welcome-icon" aria-hidden="true">🏛️</div>
+      <h2>ESTUDIO INTELIGENTE 2.0 <span>· OMEN AG-41</span></h2>
+      <p>Para comenzar, seleccione una <strong>Asignatura</strong> arriba y luego el <strong>Módulo</strong> que desea estudiar (01 al 06).</p>
+      <p class="reference-welcome-hint">El contenido de estudio aparece cuando usted activa un módulo.</p>
+      <div class="reference-welcome-actions">
+        <button type="button" class="btn-primary-glow reference-crunch" onclick="startSprint('civiles')">🚨 CRUNCH 72H: REPASO CIV-403</button>
+        <button type="button" class="btn-primary-glow" onclick="openCalendarModal()">📅 Ver Calendario &amp; Pruebas</button>
+        <button type="button" class="btn-secondary" onclick="openDuolingoModal()">🇬🇧 Sprint Inglés Técnico (Duolingo ConTech)</button>
+      </div>
+    </section>
 
     <!-- BARRA LATERAL NAVEGADORA DE FRENTES ACADÉMICOS -->
     <aside class="academic-sidebar" id="sidebar-nav" aria-labelledby="sidebar-title">
@@ -270,13 +302,18 @@
       <!-- ======================================================== -->
       <!-- VISTA DINÁMICA: MOTOR DOCTORAL OMEN + ATLAS + ITO        -->
       <!-- ======================================================== -->
-      <div class="study-session-container" id="study-session-view" tabindex="-1">
+      <div class="study-session-container hidden" id="study-session-view" tabindex="-1">
 
         <!-- Barra de Estado de la Sesión -->
         <div class="session-header-bar">
           <div class="session-subject-info">
             <span class="active-subject-badge" id="current-subject-badge">IPLACEX · IND-401</span>
             <h3 class="active-lesson-title" id="current-lesson-title">Módulo 03: Hormigón Prefabricado & Montaje Industrializado</h3>
+            <p id="reference-hours"></p>
+            <div class="reference-session-actions">
+              <button type="button" class="btn-secondary" onclick="openStudyMaterial()">Cargar Apunte / URL</button>
+              <button type="button" class="btn-primary-glow" onclick="exportStudyModule()">Exportar Minuta PDF</button>
+            </div>
           </div>
           
           <!-- Selector de Modo Pedagógico -->
@@ -911,6 +948,8 @@
   <script src="./src/gemini-client.js?v=2.0.0-PROD" defer></script>
   <script src="./src/fsrs.js?v=2.0.0-PROD" defer></script>
   <script src="./src/pdf-viewer.js?v=2.0.0-PROD" defer></script>
+  <script src="./src/curriculum.js?v=2.0.0-PROD" defer></script>
+  <script src="./src/reference-ui.js?v=2.0.0-PROD" defer></script>
   <script src="./app.js?v=2.0.0-PROD" defer></script>
   <script src="./pwa.js?v=2.0.0-PROD" defer></script>
 </body>

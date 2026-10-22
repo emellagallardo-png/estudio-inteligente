@@ -65,7 +65,7 @@ function setHTML(element, trustedHTML) {
 // y se borra definitivamente de localStorage.
 // --------------------------------------------------------------------------
 function migrateAndClearLegacyKeys() {
-  const legacyKeys = ['mega_ai_studio_key', 'MEGA_AI_STUDIO_KEY'];
+  const legacyKeys = ['mega_ai_studio_key', 'MEGA_AI_STUDIO_KEY', 'Gemini_ApiKey_Estudio'];
   legacyKeys.forEach(k => {
     const val = localStorage.getItem(k);
     if (val) {
