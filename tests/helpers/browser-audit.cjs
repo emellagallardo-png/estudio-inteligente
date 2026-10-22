@@ -157,12 +157,21 @@ async function startBrowser(root) {
         try { if (await page.evaluate(expression)) return; } catch (error) { lastError = error; }
         await new Promise(resolve => setTimeout(resolve, 100));
       }
-      throw new Error('Timeout esperando condición del navegador.' + (lastError ? ' ' + lastError.message : ''));
+      const debugState = await page.evaluate(() => ({
+        auditNav: typeof document.__auditNavigating,
+        rs: document.readyState,
+        fsrs: typeof FSRSEngine,
+        cal: typeof CALENDAR_EVENTS,
+        gemini: typeof callGeminiApi,
+        due: document.getElementById('fsrs-due-count')?.textContent
+      })).catch(e => ({ evalError: e.message }));
+      throw new Error('Timeout esperando condición del navegador. Estado: ' + JSON.stringify(debugState) + (lastError ? ' ' + lastError.message : ''));
     };
     const navigate = async url => {
+      await page.evaluate(() => { document.__auditNavigating = true; }).catch(() => {});
       await page.send('Page.navigate', { url });
       await waitFor('location.href === ' + JSON.stringify(url));
-      await waitFor(() => document.readyState === 'complete' && typeof FSRSEngine !== 'undefined');
+      await waitFor(() => typeof document.__auditNavigating === 'undefined' && document.readyState === 'complete' && typeof FSRSEngine !== 'undefined' && typeof CALENDAR_EVENTS !== 'undefined' && typeof callGeminiApi !== 'undefined');
       await waitFor(() => !document.getElementById('fsrs-due-count').textContent.includes('calculando'));
     };
     await navigate(origin + '/index.html');

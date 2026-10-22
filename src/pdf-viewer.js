@@ -229,17 +229,19 @@ const PDFViewer = (() => {
   }
 
   function tokenize(query) {
-    return String(query || '')
-      .toLocaleLowerCase('es-CL')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .split(/[^a-z0-9]+/)
-      .filter((term) => term.length > 2 && !STOP_WORDS.has(term));
+    const raw = String(query || '').toLocaleLowerCase('es-CL').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const chapterMatches = raw.match(/\b\d+(?:\.\d+)+\b/g) || [];
+    const words = raw.split(/[^a-z0-9.]+/).filter((term) => (term.length >= 2 || /\d/.test(term)) && !STOP_WORDS.has(term));
+    return Array.from(new Set([...words, ...chapterMatches]));
   }
 
   function pageScore(text, terms) {
     const normalized = String(text || '').toLocaleLowerCase('es-CL').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    return terms.reduce((score, term) => score + (normalized.includes(term) ? 1 : 0), 0);
+    return terms.reduce((score, term) => {
+      if (!term) return score;
+      const weight = /\d+\.\d+/.test(term) ? 15 : 1;
+      return score + (normalized.includes(term) ? weight : 0);
+    }, 0);
   }
 
   function getChatContext(query) {

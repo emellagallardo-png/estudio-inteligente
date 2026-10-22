@@ -2726,6 +2726,76 @@ body.reference-layout .app-header {
   margin: 0 auto !important;
 }
 
+@media (max-width: 860px) {
+  body.reference-layout .app-header {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    padding: 10px 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  body.reference-layout .header-left {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  body.reference-layout .header-left .brand-badge-mg {
+    display: flex !important;
+  }
+
+  body.reference-layout .header-left .app-title {
+    font-size: 14px !important;
+  }
+
+  body.reference-layout .header-center {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  body.reference-layout .header-right {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+    align-items: center !important;
+  }
+
+  body.reference-layout .header-right .jwrose-player {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    margin-bottom: 4px !important;
+  }
+
+  body.reference-layout .header-right .sunlight-toggle {
+    display: none !important;
+  }
+
+  body.reference-layout .header-right .voice-btn,
+  body.reference-layout .header-right .ai-studio-btn {
+    flex: 1 1 calc(50% - 6px) !important;
+    min-width: 130px !important;
+    height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+  }
+
+  body.reference-layout .header-right .ai-studio-btn .btn-text,
+  body.reference-layout .header-right .ai-studio-btn .ai-status-dot,
+  body.reference-layout .header-right .voice-btn .btn-text {
+    display: inline-block !important;
+  }
+}
+
 body.reference-layout .main-container {
   display: flex !important;
   flex-direction: column !important;
