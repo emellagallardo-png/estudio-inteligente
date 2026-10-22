@@ -77,11 +77,12 @@
           <span></span><span></span><span></span><span></span>
         </div>
         <label class="sr-only" for="audio-preset-select">Canal de música de estudio</label>
-        <select id="audio-preset-select" class="audio-dropdown" title="Canales Curados YouTube Music">
-          <option value="alpha">🧠 Ondas Alfa 432Hz (Deep Work)</option>
-          <option value="gnr">⚡ Rock Focus (Guns N' Roses / Instrumental)</option>
+        <select id="audio-preset-select" class="audio-dropdown" title="Canales Oficiales YouTube Music" onchange="changeJwrosePreset(this.value)">
+          <option value="gnr">⚡ Guns N' Roses &amp; Hard Rock Focus</option>
+          <option value="vangelis">🌌 Vangelis &amp; Sci-Fi Synth Ambience</option>
+          <option value="classical">🎻 Música Clásica (Bach &amp; Mozart Focus)</option>
+          <option value="alpha">🧠 Ondas Alfa 432Hz (Deep Study)</option>
           <option value="lofi">☕ Lo-Fi ConTech (Estudio Nocturno)</option>
-          <option value="custom">🔗 Vincular YouTube Music</option>
         </select>
         <button class="btn-audio-toggle" id="btn-toggle-audio" aria-label="Reproducir o pausar música de estudio" title="Reproducir / Pausar Música de Estudio">▶</button>
       </div>
@@ -322,7 +323,7 @@
               <span>🏛️ TRÍADA PERICIAL</span>
             </button>
             <button class="mode-tab" id="tab-mode-astra" onclick="switchPedagogicalMode('astra')">
-              <span>⚡ ASTRA AI SOCRÁTICO</span>
+              <span>🎯 CASOS DE TERRENO</span>
             </button>
             <button class="mode-tab" id="tab-mode-feynman" onclick="switchPedagogicalMode('feynman')">
               <span>🔬 VALIDADOR FEYNMAN</span>
@@ -410,13 +411,13 @@
           </div>
         </div>
 
-        <!-- PANEL 2: MOTOR ASTRA AI SOCRÁTICO PASO A PASO -->
+        <!-- PANEL 2: SIMULADOR INTERACTIVO DE CASOS DE TERRENO -->
         <div class="pedagogical-panel" id="panel-astra">
           <div class="astra-interactive-wrapper">
             <div class="astra-header">
               <div class="astra-indicator">
                 <span class="astra-orb"></span>
-                <span>MOTOR SOCRÁTICO ASTRA AI · PASO A PASO INTERACTIVO</span>
+                <span>SIMULADOR INTERACTIVO DE TERRENO · PROTOCOLO ITO</span>
               </div>
               <div class="astra-step-counter" id="astra-step-indicator">PASO 2 DE 4 · VERIFICACIÓN OBLIGATORIA</div>
             </div>

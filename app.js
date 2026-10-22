@@ -353,6 +353,11 @@ function selectSubject(subjectKey, moduleIndex = 1) {
   renderStudyMarkup(document.getElementById('atlas-content-box'), data.atlas);
   renderStudyMarkup(document.getElementById('ito-content-box'), data.ito);
 
+  const feynmanH3 = document.querySelector('.feynman-prompt-card h3');
+  if (feynmanH3 && data.feynmanPrompt) {
+    feynmanH3.textContent = data.feynmanPrompt;
+  }
+
   // Actualizar Astra AI Scenario
   if (data.astraScenario) {
     document.querySelector('.scenario-title').textContent = data.astraScenario.title;
@@ -564,40 +569,138 @@ function showFeynmanReview() {
 }
 
 // --------------------------------------------------------------------------
-// 6. MOTOR DE AUDIO INTERACTIVO (WEB SPEECH API / NOTEBOOKLM STYLE)
+// 6. MOTOR DE AUDIO INTERACTIVO (NOTEBOOKLM DIALOGUE BIDIRECCIONAL)
 // --------------------------------------------------------------------------
 let speechSynthesisInstance = window.speechSynthesis;
 let isSpeaking = false;
+let voiceRecognitionActive = false;
+let activeVoiceRecognition = null;
+
+function speakUtterance(text, onFinished) {
+  if (!('speechSynthesis' in window)) {
+    if (onFinished) onFinished();
+    return;
+  }
+  speechSynthesisInstance.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'es-CL';
+  utterance.rate = 1.05;
+  utterance.onend = () => {
+    isSpeaking = false;
+    if (onFinished) onFinished();
+  };
+  utterance.onerror = () => {
+    isSpeaking = false;
+    if (onFinished) onFinished();
+  };
+  isSpeaking = true;
+  speechSynthesisInstance.speak(utterance);
+}
+
+function startListeningNotebookLM() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert('Reconocimiento de voz por hardware no soportado en este navegador.');
+    resetVoiceButtonState();
+    return;
+  }
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SpeechRec();
+  activeVoiceRecognition = rec;
+  rec.lang = 'es-CL';
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  const voiceBtn = document.getElementById('btn-toggle-voice');
+  const btnText = voiceBtn?.querySelector('.btn-text');
+
+  rec.onstart = () => {
+    voiceRecognitionActive = true;
+    if (voiceBtn) {
+      voiceBtn.style.background = 'rgba(239, 68, 68, 0.25)';
+      voiceBtn.style.borderColor = '#EF4444';
+      voiceBtn.style.color = '#EF4444';
+    }
+    if (btnText) btnText.textContent = '🎙️ TE ESCUCHO...';
+  };
+
+  rec.onresult = async (event) => {
+    const query = event.results[0][0].transcript;
+    if (btnText) btnText.textContent = '🧠 PROCESANDO...';
+    if (voiceBtn) {
+      voiceBtn.style.background = 'rgba(0, 240, 255, 0.2)';
+      voiceBtn.style.borderColor = 'var(--color-cyan)';
+      voiceBtn.style.color = 'var(--color-cyan)';
+    }
+
+    try {
+      const subject = ACADEMIC_DATABASE[AppState.activeSubject];
+      const lessonTitle = subject?.lessonTitle || 'Ingeniería en Construcción';
+      const prompt = `El CEO J. Esteban Mella Gallardo te consulta de viva voz en modo diálogo NotebookLM: "${query}". Responde como OMEN AG-41 y Mentor Doctoral. Sé muy conciso (máximo 2 a 3 oraciones periciales habladas) para ser reproducido por voz alta en terreno. Enfócate en la materia: ${lessonTitle}.`;
+      const res = await callGeminiApi(prompt, 'Modo audio NotebookLM: conciso, hablado y pericial.');
+      const reply = res.triada_verdict?.omen || res.omen || 'Entendido, Comandante. Procedemos con la verificación técnica.';
+      
+      if (btnText) btnText.textContent = '🗣️ OMEN RESPONDE';
+      speakUtterance(reply, () => {
+        if (voiceRecognitionActive) {
+          startListeningNotebookLM();
+        } else {
+          resetVoiceButtonState();
+        }
+      });
+    } catch (e) {
+      speakUtterance('Comandante, hubo una interferencia en el enlace. Reintente por favor.', () => {
+        resetVoiceButtonState();
+      });
+    }
+  };
+
+  rec.onerror = () => {
+    resetVoiceButtonState();
+  };
+
+  rec.onend = () => {
+    if (!isSpeaking && !voiceRecognitionActive) {
+      resetVoiceButtonState();
+    }
+  };
+
+  rec.start();
+}
+
+function resetVoiceButtonState() {
+  voiceRecognitionActive = false;
+  isSpeaking = false;
+  const voiceBtn = document.getElementById('btn-toggle-voice');
+  const btnText = voiceBtn?.querySelector('.btn-text');
+  if (voiceBtn) {
+    voiceBtn.style.background = 'rgba(0, 240, 255, 0.1)';
+    voiceBtn.style.borderColor = 'var(--color-cyan)';
+    voiceBtn.style.color = 'var(--color-cyan)';
+    voiceBtn.setAttribute('aria-pressed', 'false');
+  }
+  if (btnText) btnText.textContent = 'VOICE RAG';
+}
 
 function toggleVoiceInteractive() {
-  if (isSpeaking) {
-    speechSynthesisInstance.cancel();
-    isSpeaking = false;
-    document.getElementById('btn-toggle-voice').style.background = 'rgba(0, 240, 255, 0.1)';
-    document.getElementById('btn-toggle-voice').style.color = 'var(--color-cyan)';
-    document.getElementById('btn-toggle-voice').setAttribute('aria-pressed', 'false');
+  const voiceBtn = document.getElementById('btn-toggle-voice');
+
+  if (isSpeaking || voiceRecognitionActive) {
+    if (speechSynthesisInstance) speechSynthesisInstance.cancel();
+    if (activeVoiceRecognition) {
+      try { activeVoiceRecognition.stop(); } catch(e){}
+    }
+    resetVoiceButtonState();
     return;
   }
 
   const subject = ACADEMIC_DATABASE[AppState.activeSubject];
-  const textToSpeak = `Esteban, te habla OMEN AG-41. En la asignatura ${subject.name}, el punto pericial crítico que el ITO Auditor debe vigilar hoy es la recepción formal y las tolerancias normativas. ¿Deseas que te formule una pregunta diagnóstica de examen o prefieres escuchar el resumen de terreno?`;
+  const lesson = subject?.lessonTitle || subject?.name || 'la materia';
+  const welcomeText = `Comandante Esteban, te habla OMEN AG-41. Estamos en ${lesson}. Cuéntame tu duda técnica o explícame el concepto clave. Te escucho.`;
 
-  const utterance = new SpeechSynthesisUtterance(textToSpeak);
-  utterance.lang = 'es-CL';
-  utterance.rate = 1.05;
-
-  utterance.onend = () => {
-    isSpeaking = false;
-    document.getElementById('btn-toggle-voice').style.background = 'rgba(0, 240, 255, 0.1)';
-    document.getElementById('btn-toggle-voice').style.color = 'var(--color-cyan)';
-    document.getElementById('btn-toggle-voice').setAttribute('aria-pressed', 'false');
-  };
-
-  speechSynthesisInstance.speak(utterance);
-  isSpeaking = true;
-  document.getElementById('btn-toggle-voice').style.background = 'var(--color-cyan)';
-  document.getElementById('btn-toggle-voice').style.color = '#000';
-  document.getElementById('btn-toggle-voice').setAttribute('aria-pressed', 'true');
+  if (voiceBtn) voiceBtn.setAttribute('aria-pressed', 'true');
+  speakUtterance(welcomeText, () => {
+    startListeningNotebookLM();
+  });
 }
 
 function toggleVoiceInput(targetTextareaId) {
@@ -627,42 +730,56 @@ function toggleVoiceInput(targetTextareaId) {
 }
 
 // --------------------------------------------------------------------------
-// 7. JWROSE AUDIO LOUNGE (YOUTUBE MUSIC INTEGRATION)
+// 7. JWROSE AUDIO LOUNGE (YOUTUBE MUSIC INTEGRATION REAL)
 // --------------------------------------------------------------------------
-let audioContext;
-let oscillatorNode;
+const JWROSE_YOUTUBE_CHANNELS = {
+  gnr: {
+    name: "Guns N' Roses & Hard Rock Focus",
+    url: "https://music.youtube.com/search?q=guns+n+roses+instrumental+rock+focus"
+  },
+  vangelis: {
+    name: "Vangelis & Sci-Fi Synth Ambience",
+    url: "https://music.youtube.com/search?q=vangelis+blade+runner+ambient+study"
+  },
+  classical: {
+    name: "Música Clásica (Bach & Mozart)",
+    url: "https://music.youtube.com/search?q=bach+mozart+study+concentration"
+  },
+  alpha: {
+    name: "Ondas Alfa 432Hz (Deep Study)",
+    url: "https://music.youtube.com/search?q=432hz+alpha+waves+deep+study"
+  },
+  lofi: {
+    name: "Lo-Fi ConTech (Estudio Nocturno)",
+    url: "https://music.youtube.com/search?q=lofi+contech+study+beats"
+  }
+};
+
+function changeJwrosePreset(presetKey) {
+  const channel = JWROSE_YOUTUBE_CHANNELS[presetKey] || JWROSE_YOUTUBE_CHANNELS.gnr;
+  console.log(`[JWROSE 39]: Canal seleccionado: ${channel.name}`);
+  if (AppState.audioPlaying) {
+    window.open(channel.url, '_blank');
+  }
+}
 
 function toggleJwroseAudio() {
   const btn = document.getElementById('btn-toggle-audio');
+  const selector = document.getElementById('audio-preset-select');
   const bars = document.querySelectorAll('.soundwave-bars span');
+  const preset = selector ? selector.value : 'gnr';
+  const channel = JWROSE_YOUTUBE_CHANNELS[preset] || JWROSE_YOUTUBE_CHANNELS.gnr;
 
   if (AppState.audioPlaying) {
     AppState.audioPlaying = false;
     btn.textContent = '▶';
     bars.forEach(b => b.style.animationPlayState = 'paused');
-    if (oscillatorNode) {
-      try { oscillatorNode.stop(); } catch(e){}
-    }
   } else {
     AppState.audioPlaying = true;
     btn.textContent = '❚❚';
     bars.forEach(b => b.style.animationPlayState = 'running');
-    
-    // Generar tono sutil de concentración (Ondas Alfa 432 Hz) usando Web Audio API nativo
-    try {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(432, audioContext.currentTime);
-      gain.gain.setValueAtTime(0.015, audioContext.currentTime); // Volumen sutil relajante
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      osc.start();
-      oscillatorNode = osc;
-    } catch(e) {
-      console.log('Web Audio no activo');
-    }
+    // Abre directamente la emisora curada en YouTube Music
+    window.open(channel.url, '_blank');
   }
 }
 
@@ -1585,10 +1702,12 @@ function checkAiStudioStatus() {
   const label = document.getElementById('ai-status-label');
   const indicatorLight = document.getElementById('ai-active-indicator-light');
   const statusText = document.getElementById('ai-active-status-text');
+  const aiBtn = document.getElementById('btn-open-ai-modal');
 
   if (hasKey) {
     if (dot) dot.classList.add('connected');
     if (label) label.textContent = 'GEMINI ONLINE';
+    if (aiBtn) aiBtn.classList.add('gemini-connected');
     if (indicatorLight) indicatorLight.style.background = '#10B981';
     if (statusText) {
       const model = SecureVault.getModel();
@@ -1598,6 +1717,7 @@ function checkAiStudioStatus() {
   } else {
     if (dot) dot.classList.remove('connected');
     if (label) label.textContent = 'AI STUDIO';
+    if (aiBtn) aiBtn.classList.remove('gemini-connected');
     if (indicatorLight) indicatorLight.style.background = '#EF4444';
     if (statusText) {
       statusText.textContent = 'ESTADO: MODO SIMULACIÓN LOCAL (SIN CLAVE)';

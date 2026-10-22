@@ -93,6 +93,10 @@ function prepareStudyModule(subjectKey, moduleIndex) {
   document.getElementById('reference-hours').textContent = 'Carga lectiva: ' + curriculum.hours;
   document.getElementById('study-session-view').classList.remove('hidden');
   document.getElementById('reference-welcome').classList.add('hidden');
+  const feynmanH3 = document.querySelector('.feynman-prompt-card h3');
+  if (feynmanH3 && module.feynmanPrompt) {
+    feynmanH3.textContent = module.feynmanPrompt;
+  }
   document.getElementById('feynman-user-input').placeholder = module.feynmanPrompt || 'Explique el tema con sus palabras';
   document.getElementById('feynman-user-input').value = '';
   document.getElementById('feynman-analyzed-markup').replaceChildren();
