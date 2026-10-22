@@ -28,8 +28,8 @@
 | **Fase 4** | **Capa Documental Verificable:** Corpus normativo con hash, cita de normas NCh/OGUC y control de abstención estricto. | `[COMPLETADA 100%]` | `/src/corpus.js`, `index.html`, `app.js`, `sw.js` | MEGA 2.0 |
 | **Fase 5** | **Conexión Gemini Segura & Agentes Reales:** Proxy seguro para API Keys con salida estructurada JSON (OMEN, ATLAS, ITO). | `[COMPLETADA 100%]` | `/src/gemini-client.js`, `app.js`, `index.html`, `sw.js` | Codex (GPT-5) |
 | **Fase 6** | **Reconstrucción Funcional:** PDF.js real para apuntes, extracción local de texto, agenda dinámica y FSRS v4 persistente en `IndexedDB`. | `[COMPLETADA 100%]` | `/src/fsrs.js`, `/src/pdf-viewer.js`, `app.js`, `index.html`, `styles.css`, `sw.js` | Codex (GPT-5) |
-| **Fase 7** | **Móvil, Ergonomía y Accesibilidad:** Optimización para Xiaomi Redmi Note 13 Pro 5G (44px Fitts, OLED 1800 nits, ARIA). | `[LISTO PARA INICIAR]` | `styles.css`, modales | Por asignar |
-| **Fase 8** | **Verificación y Liberación:** Pruebas unitarias, simulación modo avión offline, auditoría final y publicación en GitHub. | `[PENDIENTE]` | Suite de pruebas | Por asignar |
+| **Fase 7** | **Móvil, Ergonomía y Accesibilidad:** Controles de 44px, drawer accesible hasta 860px, header móvil de 56px, modo Sol y guantes y gestión WCAG de foco/teclado. | `[COMPLETADA 100%]` | `styles.css`, `index.html`, `app.js`, `tests/accessibility.browser.cjs` | Codex |
+| **Fase 8** | **Verificación y Liberación:** Pruebas unitarias, simulación modo avión offline, auditoría final y publicación en GitHub. | `[LISTO PARA INICIAR]` | Suite de pruebas | Por asignar |
 
 ---
 
@@ -43,4 +43,15 @@
 - **21-10-2026:** Fase 6 completada. FSRS v4 persiste estabilidad, dificultad, revisiones, vencimientos y racha en IndexedDB; PDF.js renderiza archivos locales y entrega texto paginado al contexto OMEN; agenda y exportación iCalendar operan con fecha del sistema y CRLF RFC 5545.
 
 ---
+### 4. ENTREGA DE FASE 7 · MÓVIL Y ACCESIBILIDAD
+
+- Controles y cierres con objetivo táctil mínimo de 44×44 CSS px; sidebar superpuesto y header de 56px en anchos hasta 860px.
+- Telemetría, música y voz se trasladan al drawer sin duplicar controles ni perder funciones.
+- Modo Sol y guantes con superficies opacas y variables de alto contraste; respeta la preferencia del sistema de mayor contraste.
+- Los cinco modales tienen nombre accesible, aislamiento del fondo, trampa de foco, Escape y restauración del foco. El aislamiento se reconstruye al rotar la pantalla.
+- Grupos laterales y días del calendario admiten Enter/Espacio; pestañas con flechas/Home/End, etiquetas explícitas en formularios, foco visible y reducción de movimiento.
+- Verificación reproducible en Edge con Playwright/axe-core: 320, 393, 430, 860, 861 y 1440px; vistas, drawer, modales, contraste normal/alto, formularios y teclado. Regresión FSRS/PDF/calendario conservada.
+- Ejecutar `node --test tests/fsrs.test.js tests/calendar.test.js tests/pdf-viewer.test.js` y `node tests/accessibility.browser.cjs`. La segunda prueba requiere Edge, `playwright-core` y `axe-core` disponibles mediante Node o `NODE_PATH`; las dependencias de auditoría no se incluyen en los activos de la aplicación.
+- Validación responsive en navegador de escritorio; la comprobación física en Xiaomi y la auditoría final de liberación corresponden a la Fase 8. No se modifica el brillo físico del dispositivo desde la aplicación.
+
 `[MG] MEGA INSPECCIÓN · CONSULTORÍA TÉCNICA INTELIGENTE [ITO]`

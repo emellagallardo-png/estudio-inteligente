@@ -22,11 +22,13 @@
   <link rel="stylesheet" href="./styles.css?v=2026.10.21.1">
 </head>
 <body class="dark-luxury">
+  <a class="skip-link" href="#study-session-view">Saltar al contenido de estudio</a>
 
   <!-- ======================================================== -->
   <!-- 1. HEADER TÁCTICO & IDENTIDAD MG                        -->
   <!-- ======================================================== -->
   <header class="app-header" id="main-header">
+    <button type="button" class="drawer-toggle" id="sidebar-toggle" aria-label="Abrir frentes académicos" aria-controls="sidebar-nav" aria-expanded="false" onclick="toggleSidebarDrawer()">☰</button>
     <div class="header-left">
       <!-- Isotipo Oficial MG Canónico (44x44px, Montserrat 600, #FF5E00) -->
       <div class="brand-badge-mg" title="Mella Gallardo · Soberanía Fundacional">
@@ -50,15 +52,16 @@
         <span class="pill-label">RACHA:</span>
         <span class="pill-value" id="user-streak">14 DÍAS</span>
       </div>
-      <div class="telemetry-pill calendar-pill" id="btn-open-calendar-modal" title="Exámenes Críticos de Esta Semana">
+      <button type="button" class="telemetry-pill calendar-pill" id="btn-open-calendar-modal" title="Exámenes Críticos de Esta Semana">
         <span class="exam-icon">⏳</span>
         <span class="pill-label">ESTA SEMANA:</span>
         <span class="pill-value alert-text" id="next-exam-badge">AGENDA CALCULANDO…</span>
-      </div>
+      </button>
     </div>
 
     <!-- Header Derecho: Jwrose Audio Lounge & Controles -->
     <div class="header-right">
+      <button type="button" class="sunlight-toggle" id="sunlight-toggle" aria-label="Modo Sol y guantes: alto contraste" aria-pressed="false" onclick="toggleSunlightMode()" title="Modo Sol y guantes">☀</button>
       <!-- Jwrose Audio Lounge Widget -->
       <div class="jwrose-player" id="jwrose-audio-widget">
         <div class="jwrose-badge">
@@ -68,13 +71,14 @@
         <div class="soundwave-bars" id="audio-visualizer">
           <span></span><span></span><span></span><span></span>
         </div>
+        <label class="sr-only" for="audio-preset-select">Canal de música de estudio</label>
         <select id="audio-preset-select" class="audio-dropdown" title="Canales Curados YouTube Music">
           <option value="alpha">🧠 Ondas Alfa 432Hz (Deep Work)</option>
           <option value="gnr">⚡ Rock Focus (Guns N' Roses / Instrumental)</option>
           <option value="lofi">☕ Lo-Fi ConTech (Estudio Nocturno)</option>
           <option value="custom">🔗 Vincular YouTube Music</option>
         </select>
-        <button class="btn-audio-toggle" id="btn-toggle-audio" title="Reproducir / Pausar Música de Estudio">▶</button>
+        <button class="btn-audio-toggle" id="btn-toggle-audio" aria-label="Reproducir o pausar música de estudio" title="Reproducir / Pausar Música de Estudio">▶</button>
       </div>
 
       <!-- Botón Modo Manos Libres (Audio Interactivo) -->
@@ -84,7 +88,7 @@
       </button>
 
       <!-- Botón Google AI Studio (Gemini 2.0 Flash / 1.5 Pro) -->
-      <button class="btn-action-glow ai-studio-btn" id="btn-open-ai-modal" onclick="openAiStudioModal()" title="Conexión de Inteligencia Google AI Studio (Gemini 2.0 / 1.5 Pro)">
+      <button class="btn-action-glow ai-studio-btn" id="btn-open-ai-modal" onclick="openAiStudioModal()" aria-label="Configurar conexión Google AI Studio" title="Conexión de Inteligencia Google AI Studio (Gemini 2.0 / 1.5 Pro)">
         <span class="ai-icon">🔑</span>
         <span class="btn-text" id="ai-status-label">AI STUDIO</span>
         <span class="ai-status-dot" id="ai-status-dot" title="Desconectado"></span>
@@ -98,17 +102,21 @@
   <main class="main-container" id="app-workspace">
 
     <!-- BARRA LATERAL NAVEGADORA DE FRENTES ACADÉMICOS -->
-    <aside class="academic-sidebar" id="sidebar-nav">
-      <div class="sidebar-section-title">FRENTES ACADÉMICOS</div>
+    <aside class="academic-sidebar" id="sidebar-nav" aria-labelledby="sidebar-title">
+      <div class="drawer-heading">
+        <h2 class="sidebar-section-title" id="sidebar-title" tabindex="-1">FRENTES ACADÉMICOS</h2>
+        <button type="button" class="drawer-close btn-close-modal" aria-label="Cerrar frentes académicos" onclick="closeSidebarDrawer()">✕</button>
+      </div>
+      <div class="drawer-utility-controls" id="drawer-utility-controls"></div>
 
       <!-- BLOQUE 1: IPLACEX INGENIERÍA -->
       <div class="academic-group open" id="group-iplacex">
-        <div class="group-header" onclick="toggleGroup('group-iplacex')">
+        <div class="group-header" role="button" tabindex="0" aria-expanded="true" aria-controls="group-iplacex-items" onclick="toggleGroup('group-iplacex')">
           <span class="group-badge iplacex-badge">IPLACEX</span>
           <span class="group-title">Ing. Construcción</span>
           <span class="chevron">▾</span>
         </div>
-        <div class="group-items">
+        <div class="group-items" id="group-iplacex-items">
           <button class="nav-item active" data-subject="industrializada" onclick="selectSubject('industrializada')">
             <span class="item-code">IND-401</span>
             <span class="item-name">Construcción Industrializada</span>
@@ -129,12 +137,12 @@
 
       <!-- BLOQUE 2: DIPLOMADOS UC -->
       <div class="academic-group open" id="group-uc">
-        <div class="group-header" onclick="toggleGroup('group-uc')">
+        <div class="group-header" role="button" tabindex="0" aria-expanded="true" aria-controls="group-uc-items" onclick="toggleGroup('group-uc')">
           <span class="group-badge uc-badge">UC</span>
           <span class="group-title">Diplomados Gestión</span>
           <span class="chevron">▾</span>
         </div>
-        <div class="group-items">
+        <div class="group-items" id="group-uc-items">
           <button class="nav-item" data-subject="proyectos_uc" onclick="selectSubject('proyectos_uc')">
             <span class="item-code">DIP-01</span>
             <span class="item-name">Gestión de Proyectos</span>
@@ -150,12 +158,12 @@
 
       <!-- BLOQUE 3: COURSERA GLOBAL & IA -->
       <div class="academic-group open" id="group-coursera">
-        <div class="group-header" onclick="toggleGroup('group-coursera')">
+        <div class="group-header" role="button" tabindex="0" aria-expanded="true" aria-controls="group-coursera-items" onclick="toggleGroup('group-coursera')">
           <span class="group-badge coursera-badge">GLOBAL</span>
           <span class="group-title">Coursera Tech</span>
           <span class="chevron">▾</span>
         </div>
-        <div class="group-items">
+        <div class="group-items" id="group-coursera-items">
           <button class="nav-item" data-subject="google_ia" onclick="selectSubject('google_ia')">
             <span class="item-code">GGL-AI</span>
             <span class="item-name">Google IA & Multimodal</span>
@@ -193,6 +201,7 @@
             <span class="tool-desc">Diapositivas y apuntes</span>
           </div>
         </button>
+        <label class="sr-only" for="pdf-file-input">Documento PDF local</label>
         <input type="file" id="pdf-file-input" accept="application/pdf" style="display:none;" onchange="handlePdfUpload(event)">
       </div>
 
@@ -207,7 +216,7 @@
         </div>
         <div class="stat-footer">
           <span id="fsrs-due-count">FSRS: calculando tarjetas…</span>
-          <span class="alert-link" onclick="openCardsModal()">Repasar</span>
+          <button type="button" class="alert-link" onclick="openCardsModal()">Repasar</button>
         </div>
       </div>
     </aside>
@@ -231,7 +240,7 @@
             <button class="btn-primary-glow" onclick="startSprint('civiles')" style="background: #00F0FF; color:#000;">
               <span>⚡ Sprint Civiles</span>
             </button>
-            <button class="btn-primary-glow" onclick="startSprint('industrializada')" style="background: #A855F7; color:#FFF;">
+            <button class="btn-primary-glow" onclick="startSprint('industrializada')" style="background: #C084FC; color:#090D14;">
               <span>⚡ Sprint Industrializada</span>
             </button>
             <button class="btn-primary-glow" onclick="startSprint('viales')" style="background: #FF5E00; color:#000;">
@@ -261,7 +270,7 @@
       <!-- ======================================================== -->
       <!-- VISTA DINÁMICA: MOTOR DOCTORAL OMEN + ATLAS + ITO        -->
       <!-- ======================================================== -->
-      <div class="study-session-container" id="study-session-view">
+      <div class="study-session-container" id="study-session-view" tabindex="-1">
 
         <!-- Barra de Estado de la Sesión -->
         <div class="session-header-bar">
@@ -428,6 +437,7 @@
             </div>
 
             <div class="feynman-input-area">
+              <label for="feynman-user-input">Tu explicación técnica</label>
               <textarea id="feynman-user-input" class="feynman-textarea" placeholder="Escribe aquí tu explicación detallada (o presiona el botón de micrófono para dictarla)...">Para la inyección de vainas de pretensado, primero se limpia con aire comprimido exento de aceite. Se prepara un mortero fluido sin retracción. Se inyecta desde el punto más bajo hacia los respiraderos superiores hasta que salga pasta limpia sin burbujas de aire. Luego se sellan las boquillas bajo presión sostenida de 0.5 MPa.</textarea>
               <div class="feynman-controls">
                 <button class="btn-mic-dictate" onclick="toggleVoiceInput('feynman-user-input')">
@@ -489,13 +499,14 @@
                 <span class="chat-title">OMEN & ATLAS · INTERACCIÓN SOBRE EL DOCUMENTO</span>
                 <span class="chat-source-tag">Grounded AI</span>
               </div>
-              <div class="chat-messages-container" id="pdf-chat-messages">
+              <div class="chat-messages-container" id="pdf-chat-messages" tabindex="0" role="log" aria-label="Conversación sobre el documento PDF">
                 <div class="chat-msg ai-msg">
                   <div class="msg-sender">OMEN AG-41</div>
                   <div class="msg-text">Carga un PDF local. Extraeré su texto por página para responder sobre evidencia real del documento.</div>
                 </div>
               </div>
               <div class="chat-input-bar">
+                <label class="sr-only" for="pdf-chat-input">Consulta a OMEN sobre el documento</label>
                 <input type="text" id="pdf-chat-input" class="chat-input" placeholder="Pregúntale a OMEN o a ATLAS sobre esta página...">
                 <button class="btn-send-chat" onclick="sendPdfChatMessage()">Enviar</button>
               </div>
@@ -510,9 +521,9 @@
             <!-- Barra Superior del Calendario: Navegación y Filtros -->
             <div class="cal-view-toolbar">
               <div class="cal-month-selector">
-                <button class="cal-nav-btn" onclick="navigateCalendarMonth(-1)">◀</button>
+                <button class="cal-nav-btn" aria-label="Mes anterior" onclick="navigateCalendarMonth(-1)">◀</button>
                 <h3 class="cal-current-month" id="cal-month-title">MES ACTUAL</h3>
-                <button class="cal-nav-btn" onclick="navigateCalendarMonth(1)">▶</button>
+                <button class="cal-nav-btn" aria-label="Mes siguiente" onclick="navigateCalendarMonth(1)">▶</button>
               </div>
 
               <div class="cal-filter-pills">
@@ -552,14 +563,16 @@
                   <span class="agenda-counter" id="agenda-event-count">3 Pruebas Críticas</span>
                 </div>
                 
-                <div class="agenda-scroll-list" id="agenda-items-list">
+                <div class="agenda-scroll-list" id="agenda-items-list" tabindex="0" role="region" aria-label="Eventos de la agenda">
                   <!-- Renderizado dinámicamente con JavaScript -->
                 </div>
 
                 <div class="agenda-add-block">
                   <div class="add-block-title">⚡ PROGRAMAR BLOQUE PROTEGIDO (TIME-BLOCKING)</div>
                   <div class="add-block-inputs">
+                    <label class="sr-only" for="custom-study-subject">Tema del bloque de estudio</label>
                     <input type="text" id="custom-study-subject" placeholder="Tema a estudiar..." value="Obras Viales · Ensayos Marshall">
+                    <label class="sr-only" for="custom-study-duration">Duración del bloque de estudio</label>
                     <select id="custom-study-duration">
                       <option value="15">15 min (Micro-sprint)</option>
                       <option value="30">30 min (Bloque estándar)</option>
@@ -624,6 +637,8 @@
   <!-- ======================================================== -->
 
   <!-- MODAL: REPASO FSRS V4 PERSISTENTE -->
+  <div class="sidebar-scrim hidden" id="sidebar-scrim" aria-hidden="true"></div>
+
   <div class="modal-backdrop hidden" id="modal-fsrs">
     <div class="modal-container fsrs-modal-card" role="dialog" aria-modal="true" aria-labelledby="fsrs-modal-title">
       <div class="modal-header">
@@ -653,18 +668,18 @@
 
   <!-- MODAL: DUOLINGO ENGLISH SPRINT (5 MINUTOS) -->
   <div class="modal-backdrop hidden" id="modal-duolingo">
-    <div class="modal-container duolingo-modal-card">
+    <div class="modal-container duolingo-modal-card" role="dialog" aria-modal="true" aria-labelledby="duolingo-modal-title">
       <div class="modal-header">
         <div class="duolingo-title-bar">
           <span class="duo-flag">🇬🇧</span>
           <div>
-            <h3>TECHNICAL ENGLISH & FIDIC · 5-MIN SPRINT</h3>
+            <h3 id="duolingo-modal-title">TECHNICAL ENGLISH & FIDIC · 5-MIN SPRINT</h3>
             <span class="duo-subtitle">Vocabulario de Contratos Internacionales, ConTech & Faena</span>
           </div>
         </div>
         <div class="duo-stats">
           <span class="duo-lives">❤️❤️❤️</span>
-          <span class="btn-close-modal" onclick="closeDuolingoModal()">✕</span>
+          <button type="button" class="btn-close-modal" aria-label="Cerrar English Sprint" onclick="closeDuolingoModal()">✕</button>
         </div>
       </div>
 
@@ -700,19 +715,20 @@
 
   <!-- MODAL: RESUMIDOR INTELIGENTE DE YOUTUBE -->
   <div class="modal-backdrop hidden" id="modal-youtube">
-    <div class="modal-container youtube-modal-card">
+    <div class="modal-container youtube-modal-card" role="dialog" aria-modal="true" aria-labelledby="youtube-modal-title">
       <div class="modal-header">
         <div class="yt-header-title">
           <span class="yt-icon">📺</span>
-          <h3>RESUMIDOR DE CLASES Y WEBINARS DE YOUTUBE (ESTILO NOTEBOOKLM)</h3>
+          <h3 id="youtube-modal-title">RESUMIDOR DE CLASES Y WEBINARS DE YOUTUBE (ESTILO NOTEBOOKLM)</h3>
         </div>
-        <span class="btn-close-modal" onclick="closeYoutubeModal()">✕</span>
+        <button type="button" class="btn-close-modal" aria-label="Cerrar resumidor de YouTube" onclick="closeYoutubeModal()">✕</button>
       </div>
 
       <div class="modal-body">
         <p class="yt-instruction">Pega la URL del video técnico, clase grabada o webinar de ingeniería. El motor Gemini Argon extraerá la transcripción, generará timestamps y cruzará el contenido con la normativa chilena.</p>
         
         <div class="yt-input-row">
+          <label class="sr-only" for="yt-url-input">URL de la clase en YouTube</label>
           <input type="url" id="yt-url-input" class="yt-url-field" placeholder="https://www.youtube.com/watch?v=ejemplo_clase_viales">
           <button class="btn-primary-glow" onclick="processYoutubeUrl()">
             <span>⚡ PROCESAR Y RESUMIR</span>
@@ -752,13 +768,13 @@
 
   <!-- MODAL: GOOGLE CALENDAR & CRONOGRAMA DE EXÁMENES -->
   <div class="modal-backdrop hidden" id="modal-calendar">
-    <div class="modal-container calendar-modal-card">
+    <div class="modal-container calendar-modal-card" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
       <div class="modal-header">
         <div class="cal-header-title">
           <span class="cal-icon">📅</span>
-          <h3>CRONOGRAMA ACADÉMICO · PRUEBAS Y CLASES ONLINE</h3>
+          <h3 id="calendar-modal-title">CRONOGRAMA ACADÉMICO · PRUEBAS Y CLASES ONLINE</h3>
         </div>
-        <span class="btn-close-modal" onclick="closeCalendarModal()">✕</span>
+        <button type="button" class="btn-close-modal" aria-label="Cerrar cronograma académico" onclick="closeCalendarModal()">✕</button>
       </div>
 
       <div class="modal-body">
@@ -779,12 +795,12 @@
   <!-- MODAL: CONEXIÓN SEGURA GOOGLE AI STUDIO (GEMINI API)     -->
   <!-- ======================================================== -->
   <div class="modal-backdrop hidden" id="modal-ai-studio">
-    <div class="modal-container ai-modal-card">
+    <div class="modal-container ai-modal-card" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
           <span style="width: 36px; height: 36px; border-radius: 8px; background: rgba(255, 94, 0, 0.15); color: #FF5E00; border: 1px solid #FF5E00; display: flex; align-items: center; justify-content: center; font-size: 16px;">⚡</span>
           <div>
-            <h3 style="margin: 0; font-family: var(--font-display); font-size: 14px; font-weight: 800; color: #FFF;">
+            <h3 id="ai-modal-title" style="margin: 0; font-family: var(--font-display); font-size: 14px; font-weight: 800; color: #FFF;">
               CEREBRO COGNITIVO · GOOGLE AI STUDIO
             </h3>
             <span style="font-size: 10px; color: var(--color-cyan); font-family: var(--font-mono);">
@@ -792,7 +808,7 @@
             </span>
           </div>
         </div>
-        <span class="btn-close-modal" onclick="closeAiStudioModal()">✕</span>
+        <button type="button" class="btn-close-modal" aria-label="Cerrar configuración de AI Studio" onclick="closeAiStudioModal()">✕</button>
       </div>
 
       <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
@@ -814,7 +830,7 @@
         <!-- Formulario API Key -->
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: #FFF;">
+            <label for="input-ai-api-key" style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: #FFF;">
               API KEY PERSONAL DE GOOGLE AI STUDIO:
             </label>
             <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: var(--color-orange); text-decoration: none; font-size: 10.5px; font-weight: 600;">
@@ -823,16 +839,16 @@
           </div>
           <div style="display: flex; gap: 8px;">
             <input type="password" id="input-ai-api-key" placeholder="AIzaSy..." style="flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: #FFF; font-family: var(--font-mono); font-size: 12px; outline: none;">
-            <button type="button" onclick="toggleApiKeyVisibility()" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 12px; color: #FFF; cursor: pointer; font-size: 12px;" title="Mostrar / Ocultar">👁️</button>
+            <button type="button" onclick="toggleApiKeyVisibility()" aria-label="Mostrar u ocultar clave API" aria-pressed="false" id="api-key-visibility" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 12px; color: #FFF; cursor: pointer; font-size: 12px;" title="Mostrar / Ocultar">👁️</button>
           </div>
           <span style="font-size: 10px; color: var(--text-muted);">
-            🔒 Su clave se almacena exclusivamente en su navegador local (<code style="color: var(--color-cyan);">localStorage</code>), garantizando 100% privacidad y sin intermediarios.
+            🔒 Su clave permanece en memoria durante esta sesión mediante SecureVault y se elimina al recargar.
           </span>
         </div>
 
         <!-- Selector de Modelo -->
         <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: #FFF;">
+          <label for="select-ai-model" style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: #FFF;">
             MODELO DE INFERENCIA PREFERIDO:
           </label>
           <select id="select-ai-model" style="background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: #FFF; font-family: var(--font-mono); font-size: 12px; outline: none;">

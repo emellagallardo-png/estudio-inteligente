@@ -326,12 +326,16 @@ function initLocalPersistence() {
 function selectSubject(subjectKey) {
   if (!ACADEMIC_DATABASE[subjectKey]) return;
   AppState.activeSubject = subjectKey;
+  closeSidebarDrawer();
 
   // Actualizar botones de la barra lateral
   document.querySelectorAll('.nav-item').forEach(item => {
     item.classList.remove('active');
     if (item.getAttribute('data-subject') === subjectKey) {
       item.classList.add('active');
+      item.setAttribute('aria-current', 'true');
+    } else {
+      item.removeAttribute('aria-current');
     }
   });
 
@@ -377,7 +381,12 @@ function switchPedagogicalMode(modeKey) {
   AppState.pedagogicalMode = modeKey;
 
   // Actualizar pestañas
-  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    const selected = t.id === 'tab-mode-' + modeKey;
+    t.classList.toggle('active', selected);
+    t.setAttribute('aria-selected', String(selected));
+    t.tabIndex = selected ? 0 : -1;
+  });
   const activeTab = document.getElementById(`tab-mode-${modeKey}`);
   if (activeTab) activeTab.classList.add('active');
 
@@ -389,13 +398,21 @@ function switchPedagogicalMode(modeKey) {
 
 function toggleGroup(groupId) {
   const grp = document.getElementById(groupId);
-  if (grp) grp.classList.toggle('open');
+  if (grp) {
+    const expanded = grp.classList.toggle('open');
+    grp.querySelector('.group-header')?.setAttribute('aria-expanded', String(expanded));
+    const items = grp.querySelector('.group-items');
+    if (items) items.hidden = !expanded;
+  }
 }
 
 function startSprint(subjectKey) {
   selectSubject(subjectKey);
   switchPedagogicalMode('astra');
-  window.scrollTo({ top: 380, behavior: 'smooth' });
+  document.getElementById('study-session-view')?.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    block: 'start'
+  });
 }
 
 // --------------------------------------------------------------------------
@@ -463,7 +480,7 @@ function renderStructuredAudit(container, result, compact = false) {
   const header = document.createElement('div');
   header.style.cssText = 'display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px;';
   const status = document.createElement('strong');
-  status.style.color = result.verified ? '#10B981' : '#F59E0B';
+  status.style.color = result.verified ? 'var(--color-emerald)' : 'var(--color-amber)';
   status.textContent = result.verified ? '✓ EVIDENCIA NORMATIVA VERIFICADA' : '⚠ ABSTENCIÓN NORMATIVA ACTIVA';
   const score = document.createElement('span');
   score.style.cssText = 'font-family:var(--font-mono);font-weight:700;color:var(--color-cyan);';
@@ -537,7 +554,10 @@ async function evaluateFeynmanExplanation() {
 
 function showFeynmanReview() {
   switchPedagogicalMode('feynman');
-  window.scrollTo({ top: 400, behavior: 'smooth' });
+  document.getElementById('study-session-view')?.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    block: 'start'
+  });
 }
 
 // --------------------------------------------------------------------------
@@ -551,6 +571,8 @@ function toggleVoiceInteractive() {
     speechSynthesisInstance.cancel();
     isSpeaking = false;
     document.getElementById('btn-toggle-voice').style.background = 'rgba(0, 240, 255, 0.1)';
+    document.getElementById('btn-toggle-voice').style.color = 'var(--color-cyan)';
+    document.getElementById('btn-toggle-voice').setAttribute('aria-pressed', 'false');
     return;
   }
 
@@ -564,12 +586,15 @@ function toggleVoiceInteractive() {
   utterance.onend = () => {
     isSpeaking = false;
     document.getElementById('btn-toggle-voice').style.background = 'rgba(0, 240, 255, 0.1)';
+    document.getElementById('btn-toggle-voice').style.color = 'var(--color-cyan)';
+    document.getElementById('btn-toggle-voice').setAttribute('aria-pressed', 'false');
   };
 
   speechSynthesisInstance.speak(utterance);
   isSpeaking = true;
   document.getElementById('btn-toggle-voice').style.background = 'var(--color-cyan)';
   document.getElementById('btn-toggle-voice').style.color = '#000';
+  document.getElementById('btn-toggle-voice').setAttribute('aria-pressed', 'true');
 }
 
 function toggleVoiceInput(targetTextareaId) {
@@ -693,14 +718,14 @@ const DUOLINGO_QUESTIONS = [
 ];
 
 function openDuolingoModal() {
-  document.getElementById('modal-duolingo').classList.remove('hidden');
   AppState.duolingoCurrentIndex = 0;
   AppState.duolingoLives = 3;
   renderDuolingoQuestion();
+  openAccessibleModal('modal-duolingo');
 }
 
 function closeDuolingoModal() {
-  document.getElementById('modal-duolingo').classList.add('hidden');
+  closeAccessibleLayer('modal-duolingo');
 }
 
 function renderDuolingoQuestion() {
@@ -720,6 +745,11 @@ function renderDuolingoQuestion() {
 
   const progress = ((AppState.duolingoCurrentIndex + 1) / DUOLINGO_QUESTIONS.length) * 100;
   document.getElementById('duo-progress').style.width = progress + '%';
+  if (AccessibilityState.layer?.root.id === 'modal-duolingo') {
+    const heading = document.querySelector('.duo-target-phrase');
+    heading.tabIndex = -1;
+    heading.focus();
+  }
 }
 
 function checkDuolingoAnswer(idx) {
@@ -757,11 +787,11 @@ function nextDuolingoQuestion() {
 // 9. RESUMIDOR DE YOUTUBE & CRONOGRAMA DE CALENDARIO
 // --------------------------------------------------------------------------
 function openYoutubeModal() {
-  document.getElementById('modal-youtube').classList.remove('hidden');
+  openAccessibleModal('modal-youtube');
 }
 
 function closeYoutubeModal() {
-  document.getElementById('modal-youtube').classList.add('hidden');
+  closeAccessibleLayer('modal-youtube');
 }
 
 function processYoutubeUrl() {
@@ -863,11 +893,11 @@ function createTextElement(tagName, className, text) {
 
 function openCalendarModal() {
   renderCalendarModalEvents();
-  document.getElementById('modal-calendar').classList.remove('hidden');
+  openAccessibleModal('modal-calendar');
 }
 
 function closeCalendarModal() {
-  document.getElementById('modal-calendar').classList.add('hidden');
+  closeAccessibleLayer('modal-calendar');
 }
 
 function syncWithGoogleCalendar() {
@@ -879,6 +909,7 @@ function syncWithGoogleCalendar() {
 // 10. INGESTA DE PDF Y CHAT SPLIT-SCREEN
 // --------------------------------------------------------------------------
 function triggerPdfUpload() {
+  closeSidebarDrawer();
   document.getElementById('pdf-file-input').click();
 }
 
@@ -1008,7 +1039,7 @@ async function refreshFsrsDashboard() {
 async function openCardsModal() {
   const modal = document.getElementById('modal-fsrs');
   if (!modal) return;
-  modal.classList.remove('hidden');
+  openAccessibleModal('modal-fsrs');
   const status = document.getElementById('fsrs-session-status');
   if (status) status.textContent = 'Cargando tarjetas persistentes…';
   try {
@@ -1022,8 +1053,7 @@ async function openCardsModal() {
 }
 
 function closeFsrsModal() {
-  const modal = document.getElementById('modal-fsrs');
-  if (modal) modal.classList.add('hidden');
+  closeAccessibleLayer('modal-fsrs');
 }
 
 function renderFsrsCard() {
@@ -1067,6 +1097,7 @@ function renderFsrsCard() {
 function revealFsrsAnswer() {
   FsrsSession.answerVisible = true;
   renderFsrsCard();
+  document.querySelector('#modal-fsrs [data-fsrs-rating]:not(:disabled)')?.focus();
 }
 
 async function rateFsrsCard(rating) {
@@ -1085,6 +1116,11 @@ async function rateFsrsCard(rating) {
     FsrsSession.answerVisible = false;
     await refreshFsrsDashboard();
     renderFsrsCard();
+    if (AccessibilityState.layer?.root.id === 'modal-fsrs') {
+      const question = document.getElementById('fsrs-card-question');
+      question.tabIndex = -1;
+      question.focus();
+    }
   } catch (error) {
     const schedule = document.getElementById('fsrs-schedule-result');
     if (schedule) schedule.textContent = `No se pudo guardar la revisión: ${error.message}`;
@@ -1298,12 +1334,20 @@ function renderCalendarMatrix() {
     const dayStr = `${CalendarState.year}-${String(CalendarState.month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell';
+    cell.tabIndex = 0;
+    cell.setAttribute('role', 'button');
+    cell.dataset.date = dayStr;
+    cell.setAttribute('aria-pressed', String(dayStr === CalendarState.selectedDate));
+    if (dayStr === todayStr) cell.setAttribute('aria-current', 'date');
     
     if (dayStr === todayStr) cell.classList.add('is-today');
     if (dayStr === CalendarState.selectedDate) cell.classList.add('is-selected');
 
     // Eventos de este día
     const dayEvents = CALENDAR_EVENTS.filter(e => e.date === dayStr);
+    const dateLabel = new Date(CalendarState.year, CalendarState.month, d)
+      .toLocaleDateString('es-CL', { dateStyle: 'full' });
+    cell.setAttribute('aria-label', dateLabel + (dayEvents.length ? ': ' + dayEvents.map(e => e.title).join('; ') : ': sin eventos'));
     const dots = document.createElement('div');
     dots.className = 'day-event-dots';
     dayEvents.forEach(e => {
@@ -1315,9 +1359,11 @@ function renderCalendarMatrix() {
     cell.append(createTextElement('span', 'day-num', d), dots);
 
     cell.onclick = () => {
+      const hadFocus = document.activeElement === cell;
       CalendarState.selectedDate = dayStr;
       renderCalendarMatrix();
       renderAgendaItems();
+      if (hadFocus) grid.querySelector('[data-date="' + dayStr + '"]')?.focus();
     };
 
     grid.appendChild(cell);
@@ -1482,30 +1528,36 @@ function downloadIcsCalendar() {
 function openAiStudioModal() {
   const modal = document.getElementById('modal-ai-studio');
   if (modal) {
-    modal.classList.remove('hidden');
     const keyInput = document.getElementById('input-ai-api-key');
     const modelSelect = document.getElementById('select-ai-model');
-    if (keyInput) keyInput.value = '';
+    if (keyInput) {
+      keyInput.value = '';
+      keyInput.type = 'password';
+    }
+    document.getElementById('api-key-visibility')?.setAttribute('aria-pressed', 'false');
     if (modelSelect) modelSelect.value = SecureVault.getModel();
     checkAiStudioStatus();
+    openAccessibleModal('modal-ai-studio');
   }
 }
 
 function closeAiStudioModal() {
-  const modal = document.getElementById('modal-ai-studio');
-  if (modal) modal.classList.add('hidden');
+  closeAccessibleLayer('modal-ai-studio');
 }
 
 function toggleApiKeyVisibility() {
   const input = document.getElementById('input-ai-api-key');
   if (input) {
     input.type = input.type === 'password' ? 'text' : 'password';
+    document.getElementById('api-key-visibility')?.setAttribute('aria-pressed', String(input.type === 'text'));
   }
 }
 
 function checkAiStudioStatus() {
   // SECURITY FIX (Fase 2): leer desde SecureVault, no desde localStorage
   const hasKey = SecureVault.hasKey();
+  document.getElementById('btn-open-ai-modal')?.setAttribute('aria-label',
+    hasKey ? 'Configurar Google AI Studio: GEMINI ONLINE' : 'Configurar conexión Google AI Studio');
   const dot = document.getElementById('ai-status-dot');
   const label = document.getElementById('ai-status-label');
   const indicatorLight = document.getElementById('ai-active-indicator-light');
@@ -1518,7 +1570,7 @@ function checkAiStudioStatus() {
     if (statusText) {
       const model = SecureVault.getModel();
       statusText.textContent = `ESTADO: CONECTADO A ${model.toUpperCase()}`;
-      statusText.style.color = '#10B981';
+      statusText.style.color = 'var(--color-emerald)';
     }
   } else {
     if (dot) dot.classList.remove('connected');
@@ -1526,7 +1578,7 @@ function checkAiStudioStatus() {
     if (indicatorLight) indicatorLight.style.background = '#EF4444';
     if (statusText) {
       statusText.textContent = 'ESTADO: MODO SIMULACIÓN LOCAL (SIN CLAVE)';
-      statusText.style.color = '#EF4444';
+      statusText.style.color = 'var(--color-red)';
     }
   }
 }
@@ -1559,7 +1611,7 @@ async function saveAndTestAiStudioKey() {
 
     resultBox.style.background = 'rgba(16, 185, 129, 0.15)';
     resultBox.style.border = '1px solid #10B981';
-    resultBox.style.color = '#10B981';
+    resultBox.style.color = 'var(--color-emerald)';
     resultBox.replaceChildren();
     const successMsg = document.createElement('strong');
     successMsg.textContent = '✅ ¡CONEXIÓN ESTRUCTURADA EXITOSA CON GEMINI!';
@@ -1579,7 +1631,7 @@ async function saveAndTestAiStudioKey() {
   } catch (err) {
     resultBox.style.background = 'rgba(239, 68, 68, 0.15)';
     resultBox.style.border = '1px solid #EF4444';
-    resultBox.style.color = '#EF4444';
+    resultBox.style.color = 'var(--color-red)';
     resultBox.textContent = `❌ No fue posible validar Google AI Studio: ${err.message}`;
   }
 }
@@ -1602,11 +1654,227 @@ async function callGeminiApi(prompt, systemInstruction = '', context = '') {
 }
 
 // --------------------------------------------------------------------------
-// 14. INICIALIZACIÓN GLOBAL
+// 14. ACCESIBILIDAD: FOCO, MODALES Y DRAWER RESPONSIVE (FASE 7)
 // --------------------------------------------------------------------------
+const AccessibilityState = {
+  layer: null,
+  mobileQuery: null,
+  movedControls: []
+};
+
+function visibleFocusableElements(container) {
+  return Array.from(container.querySelectorAll(
+    'a[href], button, input, select, textarea, [tabindex]'
+  )).filter(element => !element.disabled && element.tabIndex >= 0
+    && !element.closest('[inert], [hidden], .hidden')
+    && element.getClientRects().length > 0
+    && getComputedStyle(element).visibility !== 'hidden');
+}
+
+function focusLayerStart(layer) {
+  const titleId = layer.dialog.getAttribute('aria-labelledby');
+  const title = titleId && document.getElementById(titleId);
+  if (title) {
+    title.tabIndex = -1;
+    title.focus({ preventScroll: true });
+  } else {
+    visibleFocusableElements(layer.dialog)[0]?.focus();
+  }
+}
+
+function activateAccessibleLayer(root, dialog, kind, opener) {
+  const inertElements = new Map();
+  // Isolate siblings at every ancestor level (also works for the nested sidebar).
+  let branch = root;
+  while (branch && branch !== document.body) {
+    for (const sibling of branch.parentElement.children) {
+      if (sibling === branch || sibling.id === 'sidebar-scrim'
+        || ['SCRIPT', 'STYLE', 'LINK'].includes(sibling.tagName)) continue;
+      inertElements.set(sibling, sibling.inert);
+      sibling.inert = true;
+    }
+    branch = branch.parentElement;
+  }
+  AccessibilityState.layer = { root, dialog, kind, opener, inertElements };
+  document.body.classList.add('overlay-open');
+  focusLayerStart(AccessibilityState.layer);
+}
+
+function openAccessibleModal(id) {
+  const root = document.getElementById(id);
+  const dialog = root?.querySelector('[role="dialog"]');
+  if (!root || !dialog || AccessibilityState.layer?.root === root) return;
+  const opener = AccessibilityState.layer?.opener || document.activeElement;
+  if (AccessibilityState.layer) closeAccessibleLayer(AccessibilityState.layer.root.id, false);
+  root.classList.remove('hidden');
+  activateAccessibleLayer(root, dialog, 'modal', opener);
+}
+
+function closeAccessibleLayer(id, restoreFocus = true) {
+  const layer = AccessibilityState.layer;
+  if (!layer || layer.root.id !== id) return;
+  AccessibilityState.layer = null;
+  layer.inertElements.forEach((wasInert, element) => { element.inert = wasInert; });
+  if (layer.kind === 'drawer') {
+    layer.root.classList.remove('drawer-open');
+    layer.root.removeAttribute('role');
+    layer.root.removeAttribute('aria-modal');
+    document.getElementById('sidebar-toggle')?.setAttribute('aria-expanded', 'false');
+    document.getElementById('sidebar-scrim')?.classList.add('hidden');
+  } else {
+    layer.root.classList.add('hidden');
+  }
+  document.body.classList.remove('overlay-open');
+  if (layer.kind === 'drawer') layer.root.inert = Boolean(AccessibilityState.mobileQuery?.matches);
+  if (restoreFocus) {
+    const target = layer.opener;
+    if (target?.isConnected && !target.closest('[inert], .hidden')
+      && target.getClientRects().length && getComputedStyle(target).visibility !== 'hidden') {
+      target.focus({ preventScroll: true });
+    } else {
+      const fallback = AccessibilityState.mobileQuery?.matches
+        ? document.getElementById('sidebar-toggle')
+        : document.getElementById('study-session-view');
+      fallback?.focus({ preventScroll: true });
+    }
+  }
+}
+
+function toggleSidebarDrawer() {
+  if (!AccessibilityState.mobileQuery?.matches) return;
+  if (AccessibilityState.layer?.kind === 'drawer') {
+    closeSidebarDrawer();
+    return;
+  }
+  if (AccessibilityState.layer) closeAccessibleLayer(AccessibilityState.layer.root.id, false);
+  const sidebar = document.getElementById('sidebar-nav');
+  if (!sidebar) return;
+  sidebar.inert = false;
+  sidebar.classList.add('drawer-open');
+  sidebar.setAttribute('role', 'dialog');
+  sidebar.setAttribute('aria-modal', 'true');
+  document.getElementById('sidebar-toggle')?.setAttribute('aria-expanded', 'true');
+  document.getElementById('sidebar-scrim')?.classList.remove('hidden');
+  activateAccessibleLayer(sidebar, sidebar, 'drawer', document.getElementById('sidebar-toggle'));
+}
+
+function closeSidebarDrawer() {
+  if (AccessibilityState.layer?.kind === 'drawer') closeAccessibleLayer('sidebar-nav');
+}
+
+function syncMobileLayout() {
+  const mobile = AccessibilityState.mobileQuery.matches;
+  const modalLayer = AccessibilityState.layer?.kind === 'modal' ? AccessibilityState.layer : null;
+  if (modalLayer) closeAccessibleLayer(modalLayer.root.id, false);
+  closeSidebarDrawer();
+  const sidebar = document.getElementById('sidebar-nav');
+  if (sidebar) sidebar.inert = mobile;
+  const slot = document.getElementById('drawer-utility-controls');
+  AccessibilityState.movedControls.forEach(({ element, placeholder }) => {
+    if (mobile) slot?.appendChild(element);
+    else placeholder.after(element);
+  });
+  // Rebuild isolation after moving controls so rotation cannot leave stale inert state.
+  if (modalLayer) {
+    modalLayer.root.classList.remove('hidden');
+    activateAccessibleLayer(modalLayer.root, modalLayer.dialog, 'modal', modalLayer.opener);
+  } else if (mobile && document.activeElement?.closest('[inert]')) {
+    document.getElementById('sidebar-toggle')?.focus();
+  }
+}
+
+function toggleSunlightMode() {
+  const enabled = document.body.classList.toggle('sunlight-mode');
+  document.getElementById('sunlight-toggle')?.setAttribute('aria-pressed', String(enabled));
+}
+
+function handleAccessibleKeydown(event) {
+  const layer = AccessibilityState.layer;
+  if (event.key === 'Escape' && layer) {
+    event.preventDefault();
+    closeAccessibleLayer(layer.root.id);
+    return;
+  }
+  if (event.key === 'Tab' && layer) {
+    const focusable = visibleFocusableElements(layer.dialog);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (!first) {
+      event.preventDefault();
+      focusLayerStart(layer);
+    } else if (!focusable.includes(active)) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    } else if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+  const buttonLike = event.target.closest('[role="button"]');
+  if (buttonLike && !buttonLike.matches('button, input')
+    && (event.key === 'Enter' || event.key === ' ')) {
+    event.preventDefault();
+    if (!event.repeat) buttonLike.click();
+  }
+  const tab = event.target.closest('[role="tab"]');
+  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault();
+    const tabs = Array.from(tab.parentElement.querySelectorAll('[role="tab"]'));
+    const direction = event.key === 'ArrowLeft' ? -1 : 1;
+    const index = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : (tabs.indexOf(tab) + direction + tabs.length) % tabs.length;
+    tabs[index].click();
+    tabs[index].focus();
+  }
+}
+
+function initAccessibility() {
+  AccessibilityState.mobileQuery = window.matchMedia('(max-width: 860px)');
+  const controls = [document.querySelector('.header-center'),
+    document.getElementById('jwrose-audio-widget'), document.getElementById('btn-toggle-voice')];
+  AccessibilityState.movedControls = controls.filter(Boolean).map(element => {
+    const placeholder = document.createComment('Desktop control position');
+    element.before(placeholder);
+    return { element, placeholder };
+  });
+  syncMobileLayout();
+  AccessibilityState.mobileQuery.addEventListener('change', syncMobileLayout);
+  document.getElementById('sidebar-scrim')?.addEventListener('click', closeSidebarDrawer);
+  if (window.matchMedia('(prefers-contrast: more)').matches) toggleSunlightMode();
+  document.addEventListener('keydown', handleAccessibleKeydown);
+  document.addEventListener('focusin', event => {
+    const layer = AccessibilityState.layer;
+    if (layer && !layer.dialog.contains(event.target)) focusLayerStart(layer);
+  });
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+    backdrop.addEventListener('click', event => {
+      if (event.target === backdrop) closeAccessibleLayer(backdrop.id);
+    });
+  });
+  document.querySelectorAll('.mode-tab').forEach(tab => {
+    const mode = tab.id.replace('tab-mode-', '');
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-controls', 'panel-' + mode);
+    const panel = document.getElementById('panel-' + mode);
+    panel?.setAttribute('role', 'tabpanel');
+    panel?.setAttribute('aria-labelledby', tab.id);
+  });
+  const tablist = document.querySelector('.pedagogical-mode-tabs');
+  tablist?.setAttribute('role', 'tablist');
+  tablist?.setAttribute('aria-label', 'Modo de estudio');
+}
+
+// Inicialización global.
 document.addEventListener('DOMContentLoaded', () => {
+  initAccessibility();
   initLocalPersistence();
   selectSubject('industrializada');
+  switchPedagogicalMode(document.getElementById('panel-' + AppState.pedagogicalMode)
+    ? AppState.pedagogicalMode : 'triad');
   renderGitHubHeatmap();
   renderSubjectRadar();
   initVisualCalendar();
