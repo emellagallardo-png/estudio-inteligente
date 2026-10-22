@@ -901,7 +901,8 @@ function closeCalendarModal() {
 }
 
 function syncWithGoogleCalendar() {
-  alert('🔄 Sincronizado con Google Calendar: 3 eventos activos y 1 alarma de prueba en Xiaomi.');
+  // No existe integración OAuth ni API de Google Calendar: intercambio por ICS.
+  downloadIcsCalendar();
   closeCalendarModal();
 }
 
@@ -1468,13 +1469,32 @@ function addPersonalTimeBlock() {
 function escapeIcsText(value) {
   return String(value || '')
     .replace(/\\/g, '\\\\')
-    .replace(/\r?\n/g, '\\n')
+    .replace(/\r\n|\r|\n/g, '\\n')
     .replace(/;/g, '\\;')
     .replace(/,/g, '\\,');
 }
 
 function formatIcsTimestamp(value = new Date()) {
   return value.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+}
+
+function foldIcsLine(value) {
+  const encoder = new TextEncoder();
+  const lines = [];
+  let line = '';
+  let bytes = 0;
+  for (const character of String(value)) {
+    const size = encoder.encode(character).length;
+    if (bytes + size > 75) {
+      lines.push(line);
+      line = ' ';
+      bytes = 1;
+    }
+    line += character;
+    bytes += size;
+  }
+  lines.push(line);
+  return lines.join('\r\n');
 }
 
 function downloadIcsCalendar() {
@@ -1507,7 +1527,7 @@ function downloadIcsCalendar() {
   });
 
   lines.push('END:VCALENDAR');
-  const icsContent = `${lines.join(CRLF)}${CRLF}`;
+  const icsContent = lines.map(foldIcsLine).join(CRLF) + CRLF;
 
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -1871,6 +1891,11 @@ function initAccessibility() {
 // Inicialización global.
 document.addEventListener('DOMContentLoaded', () => {
   initAccessibility();
+  try {
+    migrateAndClearLegacyKeys();
+  } catch {
+    console.warn('[SecureVault] El navegador no permite limpiar el almacenamiento heredado.');
+  }
   initLocalPersistence();
   selectSubject('industrializada');
   switchPedagogicalMode(document.getElementById('panel-' + AppState.pedagogicalMode)

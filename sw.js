@@ -1,4 +1,4 @@
-const APP_VERSION = '2026.10.21.1';
+const APP_VERSION = '2.0.0-PROD';
 const CACHE_PREFIX = 'estudio-inteligente-';
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 const LEGACY_CACHE_NAMES = new Set([
@@ -10,16 +10,18 @@ const LEGACY_CACHE_NAMES = new Set([
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './manifest.json?v=2026.10.21.1',
-  './styles.css?v=2026.10.21.1',
-  './security.js?v=2026.10.21.1',
-  './src/corpus.js?v=2026.10.21.1',
-  './src/gemini-client.js?v=2026.10.21.1',
-  './src/fsrs.js?v=2026.10.21.1',
-  './src/pdf-viewer.js?v=2026.10.21.1',
-  './app.js?v=2026.10.21.1',
-  './pwa.js?v=2026.10.21.1',
-  './app-icon.svg'
+  './manifest.json?v=2.0.0-PROD',
+  './styles.css?v=2.0.0-PROD',
+  './security.js?v=2.0.0-PROD',
+  './src/corpus.js?v=2.0.0-PROD',
+  './src/gemini-client.js?v=2.0.0-PROD',
+  './src/fsrs.js?v=2.0.0-PROD',
+  './src/pdf-viewer.js?v=2.0.0-PROD',
+  './app.js?v=2.0.0-PROD',
+  './pwa.js?v=2.0.0-PROD',
+  './app-icon.svg',
+  './icons/app-192.png',
+  './icons/app-512.png'
 ];
 const CACHEABLE_DESTINATIONS = new Set([
   'document',

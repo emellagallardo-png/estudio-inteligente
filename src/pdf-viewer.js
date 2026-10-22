@@ -1,6 +1,7 @@
 /**
  * PDFViewer · Fase 6 Plan Luna 5.6
- * Visor y extractor local basado en PDF.js. El archivo nunca sale del navegador.
+ * Visor y extractor local basado en PDF.js. Gemini recibe los fragmentos de texto
+ * seleccionados solo cuando el usuario envía una consulta con una clave activa.
  */
 const PDFViewer = (() => {
   'use strict';
@@ -196,7 +197,11 @@ const PDFViewer = (() => {
 
     const arrayBuffer = await readFile(file);
     const library = await ensurePdfJs();
-    const loadingTask = library.getDocument({ data: new Uint8Array(arrayBuffer) });
+    // Mitigación recomendada por Mozilla para CVE-2024-4367 en esta versión.
+    const loadingTask = library.getDocument({
+      data: new Uint8Array(arrayBuffer),
+      isEvalSupported: false
+    });
     const pdfDocument = await loadingTask.promise;
     if (token !== state.loadToken) {
       await pdfDocument.destroy();

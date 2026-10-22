@@ -49,12 +49,12 @@ function escapeHTML(str) {
 
 // --------------------------------------------------------------------------
 // C. HELPER SEGURO setHTML()
-// Reemplaza innerHTML directo. Acepta contenido HTML de confianza (API de IA,
-// plantillas internas). Para texto de usuario, sanitizar primero con escapeHTML.
+// Solo admite plantillas internas de desarrollador. La salida de IA y los datos
+// de usuario son NO confiables: deben renderizarse con nodos y textContent.
 // --------------------------------------------------------------------------
 function setHTML(element, trustedHTML) {
   if (!element) return;
-  // Usar insertAdjacentHTML limpia el contenido previo de forma segura
+  // Este helper NO sanitiza HTML; no usarlo con datos externos.
   element.innerHTML = '';
   element.insertAdjacentHTML('beforeend', trustedHTML);
 }

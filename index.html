@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#060911">
   
   <!-- PWA Manifest -->
-  <link rel="manifest" href="./manifest.json?v=2026.10.21.1">
+  <link rel="manifest" href="./manifest.json?v=2.0.0-PROD">
   <link rel="icon" type="image/svg+xml" href="./app-icon.svg">
   
   <!-- Google Fonts: Montserrat & Inter -->
@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="./styles.css?v=2026.10.21.1">
+  <link rel="stylesheet" href="./styles.css?v=2.0.0-PROD">
 </head>
 <body class="dark-luxury">
   <a class="skip-link" href="#study-session-view">Saltar al contenido de estudio</a>
@@ -538,7 +538,7 @@
                   <span>📥 Exportar .ICS</span>
                 </button>
                 <button class="btn-primary-glow" onclick="syncWithGoogleCalendar()">
-                  <span>🔄 Sincronizar Google</span>
+                  <span>📥 Exportar a Google Calendar</span>
                 </button>
               </div>
             </div>
@@ -725,7 +725,7 @@
       </div>
 
       <div class="modal-body">
-        <p class="yt-instruction">Pega la URL del video técnico, clase grabada o webinar de ingeniería. El motor Gemini Argon extraerá la transcripción, generará timestamps y cruzará el contenido con la normativa chilena.</p>
+        <p class="yt-instruction">Demostración de resumen académico. La URL despliega un ejemplo estático; esta versión no descarga ni transcribe videos de YouTube.</p>
         
         <div class="yt-input-row">
           <label class="sr-only" for="yt-url-input">URL de la clase en YouTube</label>
@@ -738,7 +738,7 @@
         <div class="yt-result-container hidden" id="yt-result-box">
           <div class="yt-video-meta">
             <h4 id="yt-video-title">Clase Magistral: Pavimentos Asfálticos y Mezclas Superpave</h4>
-            <span class="yt-duration">Duración analizada: 42 min · Transcripción 100% procesada</span>
+            <span class="yt-duration">Ejemplo académico de 42 min · No se ha descargado una transcripción</span>
           </div>
 
           <div class="yt-timestamps-list">
@@ -784,7 +784,7 @@
 
         <div class="cal-footer-actions">
           <button class="btn-primary-glow" onclick="syncWithGoogleCalendar()">
-            <span>🔄 Sincronizar con Google Calendar de J. Esteban Mella</span>
+            <span>📥 Exportar archivo para importar en Google Calendar</span>
           </button>
         </div>
       </div>
@@ -906,12 +906,12 @@
     <button type="button" id="pwa-update-action">Actualizar ahora</button>
   </aside>
 
-  <script src="./security.js?v=2026.10.21.1" defer></script>
-  <script src="./src/corpus.js?v=2026.10.21.1" defer></script>
-  <script src="./src/gemini-client.js?v=2026.10.21.1" defer></script>
-  <script src="./src/fsrs.js?v=2026.10.21.1" defer></script>
-  <script src="./src/pdf-viewer.js?v=2026.10.21.1" defer></script>
-  <script src="./app.js?v=2026.10.21.1" defer></script>
-  <script src="./pwa.js?v=2026.10.21.1" defer></script>
+  <script src="./security.js?v=2.0.0-PROD" defer></script>
+  <script src="./src/corpus.js?v=2.0.0-PROD" defer></script>
+  <script src="./src/gemini-client.js?v=2.0.0-PROD" defer></script>
+  <script src="./src/fsrs.js?v=2.0.0-PROD" defer></script>
+  <script src="./src/pdf-viewer.js?v=2.0.0-PROD" defer></script>
+  <script src="./app.js?v=2.0.0-PROD" defer></script>
+  <script src="./pwa.js?v=2.0.0-PROD" defer></script>
 </body>
 </html>

@@ -54,7 +54,10 @@ test('PDFViewer usa FileReader, renderiza y entrega texto paginado al chat', asy
   };
   global.pdfjsLib = {
     GlobalWorkerOptions: {},
-    getDocument: () => ({ promise: Promise.resolve(pdfDocument) })
+    getDocument: options => {
+      assert.equal(options.isEvalSupported, false, 'CVE-2024-4367 debe estar mitigada');
+      return { promise: Promise.resolve(pdfDocument) };
+    }
   };
 
   delete require.cache[require.resolve('../src/pdf-viewer.js')];

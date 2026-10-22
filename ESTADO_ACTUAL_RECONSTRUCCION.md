@@ -4,6 +4,7 @@
 **Director Responsable:** Agente MEGA 2.0 (`mega-director-cto`)  
 **Fecha de Inicio:** 21 de Octubre de 2026  
 **Objetivo:** Reconstrucción modular limpia, blindada y PWA de Estudio Inteligente 2.0 bajo el Plan de 8 Fases de Luna 5.6.
+**Versión certificada de software:** 2.0.0-PROD (AUDITADO Y LIBERADO). Entrega local para consolidación del responsable; no implica despliegue remoto ni certificación normativa.
 
 ---
 
@@ -29,7 +30,7 @@
 | **Fase 5** | **Conexión Gemini Segura & Agentes Reales:** Proxy seguro para API Keys con salida estructurada JSON (OMEN, ATLAS, ITO). | `[COMPLETADA 100%]` | `/src/gemini-client.js`, `app.js`, `index.html`, `sw.js` | Codex (GPT-5) |
 | **Fase 6** | **Reconstrucción Funcional:** PDF.js real para apuntes, extracción local de texto, agenda dinámica y FSRS v4 persistente en `IndexedDB`. | `[COMPLETADA 100%]` | `/src/fsrs.js`, `/src/pdf-viewer.js`, `app.js`, `index.html`, `styles.css`, `sw.js` | Codex (GPT-5) |
 | **Fase 7** | **Móvil, Ergonomía y Accesibilidad:** Controles de 44px, drawer accesible hasta 860px, header móvil de 56px, modo Sol y guantes y gestión WCAG de foco/teclado. | `[COMPLETADA 100%]` | `styles.css`, `index.html`, `app.js`, `tests/accessibility.browser.cjs` | Codex |
-| **Fase 8** | **Verificación y Liberación:** Pruebas unitarias, simulación modo avión offline, auditoría final y publicación en GitHub. | `[LISTO PARA INICIAR]` | Suite de pruebas | Por asignar |
+| **Fase 8** | **Verificación y Liberación:** Auditoría automatizada, IndexedDB/DOM reales, manifiesto instalable y recarga offline con red bloqueada. Liberación local sin commit ni publicación remota. | `[COMPLETADA 100%]` | `tests/release-audit.test.js`, arnés DevTools, módulos, PWA, iconos y README | Codex |
 
 ---
 
@@ -53,5 +54,15 @@
 - Verificación reproducible en Edge con Playwright/axe-core: 320, 393, 430, 860, 861 y 1440px; vistas, drawer, modales, contraste normal/alto, formularios y teclado. Regresión FSRS/PDF/calendario conservada.
 - Ejecutar `node --test tests/fsrs.test.js tests/calendar.test.js tests/pdf-viewer.test.js` y `node tests/accessibility.browser.cjs`. La segunda prueba requiere Edge, `playwright-core` y `axe-core` disponibles mediante Node o `NODE_PATH`; las dependencias de auditoría no se incluyen en los activos de la aplicación.
 - Validación responsive en navegador de escritorio; la comprobación física en Xiaomi y la auditoría final de liberación corresponden a la Fase 8. No se modifica el brillo físico del dispositivo desde la aplicación.
+
+### 5. CIERRE DE FASE 8 · 2.0.0-PROD (AUDITADO Y LIBERADO)
+
+- Base auditada: rama `refactor-v2-modular`, commit `1515513`. Los cambios de esta entrega quedan sin commit para revisión y consolidación del responsable.
+- `node tests/release-audit.test.js`: diez pruebas de secretos, memoria de SecureVault, corpus/abstención, FSRS/IndexedDB tras recarga, RFC 5545, DOM/XSS, precache, instalación Chromium, modo offline y contrato/timeout Gemini. Requiere Node 22+ y un navegador Chromium local; no usa npm ni credenciales reales.
+- `node --test tests/fsrs.test.js tests/calendar.test.js tests/pdf-viewer.test.js`: siete pruebas de regresión. La suite de accesibilidad de Fase 7 se conserva con su ejecución y dependencias documentadas en README.
+- Hallazgos corregidos: estabilidad FSRS calculada con dificultad previa; rechazo de calificaciones inválidas; plegado ICS a 75 octetos UTF-8 y escape de CR aislado; mitigación PDF.js CVE-2024-4367 mediante `isEvalSupported: false`; activación de limpieza de claves heredadas.
+- Manifiesto con iconos PNG 192/512 derivados del SVG oficial, precache íntegro y versión de caché/módulos `2.0.0-PROD`. El navegador verifica los criterios de instalación y una recarga sin red preserva el shell y las tarjetas.
+- README e interfaz distinguen exportación ICS real de sincronización OAuth inexistente, y resumen YouTube de demostración de una transcripción real. Se documentan las funciones y métricas que siguen usando datos de ejemplo.
+- Alcance de certificación: software y pruebas de esta entrega. El corpus es un índice local sin documentos oficiales/hash; la prueba confirma estructura y recuperación, no exactitud jurídica. PDF.js y worker se cargan desde CDN y no se garantizan offline. No se ha realizado instalación física en Xiaomi, revisión asistiva especializada ni validación contra Google con una clave real.
 
 `[MG] MEGA INSPECCIÓN · CONSULTORÍA TÉCNICA INTELIGENTE [ITO]`

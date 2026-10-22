@@ -9,6 +9,7 @@ const vm = require('node:vm');
 function loadApplicationContext() {
   let capturedIcs = '';
   const context = {
+    TextEncoder,
     console,
     setInterval: () => 0,
     clearInterval: () => {},

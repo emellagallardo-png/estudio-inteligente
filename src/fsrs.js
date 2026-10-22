@@ -221,7 +221,10 @@ const FSRSEngine = (() => {
 
   function previewReview(cardInput, rating, reviewedAt = new Date()) {
     const card = normalizeCard(cardInput);
-    const grade = clamp(Math.round(Number(rating)), 1, 4);
+    const grade = Number(rating);
+    if (!Number.isInteger(grade) || grade < 1 || grade > 4) {
+      throw new TypeError('La calificación FSRS debe ser un entero entre 1 y 4.');
+    }
     const reviewDate = reviewedAt instanceof Date ? reviewedAt : new Date(reviewedAt);
     if (Number.isNaN(reviewDate.getTime())) throw new TypeError('La fecha de revisión no es válida.');
 
@@ -236,8 +239,8 @@ const FSRSEngine = (() => {
       recall = retrievability(elapsedDays, card.stability);
       difficulty = nextDifficulty(card.difficulty, grade);
       stability = grade === RATINGS.AGAIN
-        ? stabilityAfterForget(card.stability, difficulty, recall)
-        : stabilityAfterRecall(card.stability, difficulty, recall, grade);
+        ? stabilityAfterForget(card.stability, card.difficulty, recall)
+        : stabilityAfterRecall(card.stability, card.difficulty, recall, grade);
     }
 
     const intervalDays = intervalFor(stability);
