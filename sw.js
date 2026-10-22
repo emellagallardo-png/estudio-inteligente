@@ -11,7 +11,7 @@ const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json?v=2.0.0-PROD',
-  './styles.css?v=2.0.0-PROD',
+  './styles.css?v=2.0.1-PROD',
   './security.js?v=2.0.0-PROD',
   './src/corpus.js?v=2.0.0-PROD',
   './src/gemini-client.js?v=2.0.0-PROD',

@@ -2720,13 +2720,50 @@ body.sunlight-mode {
    RESTITUCIÓN VISUAL: COMPONENTES DE REFERENCIA & DARK TITANIUM
    Barra de Acceso Rápido, Asignaturas, Módulos 01-06 y Fórmulas
    ========================================================================== */
+body.reference-layout .app-header {
+  width: 100% !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+}
+
+body.reference-layout .main-container {
+  display: flex !important;
+  flex-direction: column !important;
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 16px 20px 40px !important;
+  gap: 14px !important;
+}
+
 body.reference-layout .academic-sidebar {
   display: none !important;
 }
 
+body.reference-layout .reference-platforms,
+body.reference-layout .reference-academic,
+body.reference-layout .reference-modules,
+body.reference-layout .reference-welcome,
 body.reference-layout .workspace-viewport {
-  max-width: 100% !important;
   width: 100% !important;
+  max-width: 100% !important;
+  display: block;
+}
+
+body.reference-layout .reference-platforms {
+  display: flex !important;
+}
+
+body.reference-layout .reference-welcome {
+  display: flex !important;
+}
+
+body.reference-layout .reference-welcome.hidden {
+  display: none !important;
+}
+
+body.reference-layout .workspace-viewport {
+  padding: 0 !important;
 }
 
 /* Barra de Plataformas Rápidas */
@@ -2735,11 +2772,11 @@ body.reference-layout .workspace-viewport {
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 12px 18px;
-  margin-bottom: 14px;
   display: flex;
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .reference-platforms h2 {
@@ -2757,6 +2794,7 @@ body.reference-layout .workspace-viewport {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .reference-platform-links a {
@@ -2838,7 +2876,7 @@ body.reference-layout .workspace-viewport {
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 14px 18px;
-  margin-bottom: 12px;
+  width: 100%;
 }
 
 #reference-subjects {
@@ -2846,6 +2884,7 @@ body.reference-layout .workspace-viewport {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .reference-subject {
@@ -2912,7 +2951,7 @@ body.reference-layout .workspace-viewport {
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 14px 18px;
-  margin-bottom: 14px;
+  width: 100%;
 }
 
 .reference-modules strong {
@@ -2923,13 +2962,19 @@ body.reference-layout .workspace-viewport {
 }
 
 #reference-module-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  width: 100% !important;
+  scrollbar-width: thin;
 }
 
 .reference-module {
+  flex: 1 1 0px !important;
+  min-width: 150px !important;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
