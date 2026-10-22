@@ -4412,3 +4412,29 @@ body.reference-layout .workspace-viewport {
   .telemetry-actions { margin-left: 0; }
 }
 
+
+/* BARRA RÁPIDA MÓVIL PERICIAL */
+.mobile-quick-action-bar {
+  display: none;
+  background: #0a0e1c;
+  border-bottom: 2px solid var(--color-orange);
+  padding: 10px 16px;
+  gap: 8px;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 860px) {
+  .mobile-quick-action-bar {
+    display: flex !important;
+    justify-content: stretch;
+  }
+  .mobile-quick-action-bar button {
+    flex: 1;
+    min-height: 44px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 6px;
+    text-align: center;
+  }
+}

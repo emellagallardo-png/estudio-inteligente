@@ -1,4 +1,4 @@
-const APP_VERSION = '2.1.0-PROD';
+const APP_VERSION = '2.2.0-PROD';
 const CACHE_PREFIX = 'estudio-inteligente-';
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 const LEGACY_CACHE_NAMES = new Set([
@@ -6,24 +6,25 @@ const LEGACY_CACHE_NAMES = new Set([
   'estudio-inteligente-v1-cache',
   'estudio-inteligente-v2-cache',
   'estudio-inteligente-v3-cache',
-  'estudio-inteligente-2.0.0-PROD'
+  'estudio-inteligente-2.0.0-PROD',
+  'estudio-inteligente-2.2.0-PROD'
 ]);
 const PRECACHE_ASSETS = [
   './',
   './index.html',
-  './manifest.json?v=2.1.0-PROD',
-  './styles.css?v=2.1.0-PROD',
-  './security.js?v=2.1.0-PROD',
-  './src/corpus.js?v=2.1.0-PROD',
-  './src/gemini-client.js?v=2.1.0-PROD',
-  './src/fsrs.js?v=2.1.0-PROD',
-  './src/pdf-viewer.js?v=2.1.0-PROD',
-  './src/curriculum.js?v=2.1.0-PROD',
-  './src/reference-ui.js?v=2.1.0-PROD',
-  './src/study-notes-data.js?v=2.1.0-PROD',
-  './src/study-notes.js?v=2.1.0-PROD',
-  './app.js?v=2.1.0-PROD',
-  './pwa.js?v=2.1.0-PROD',
+  './manifest.json?v=2.2.0-PROD',
+  './styles.css?v=2.2.0-PROD',
+  './security.js?v=2.2.0-PROD',
+  './src/corpus.js?v=2.2.0-PROD',
+  './src/gemini-client.js?v=2.2.0-PROD',
+  './src/fsrs.js?v=2.2.0-PROD',
+  './src/pdf-viewer.js?v=2.2.0-PROD',
+  './src/curriculum.js?v=2.2.0-PROD',
+  './src/reference-ui.js?v=2.2.0-PROD',
+  './src/study-notes-data.js?v=2.2.0-PROD',
+  './src/study-notes.js?v=2.2.0-PROD',
+  './app.js?v=2.2.0-PROD',
+  './pwa.js?v=2.2.0-PROD',
   './app-icon.svg',
   './icons/app-192.png',
   './icons/app-512.png'
@@ -38,6 +39,7 @@ const CACHEABLE_DESTINATIONS = new Set([
 ]);
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     precacheApplication().catch((error) => {
       console.error('[Service Worker] Falló el precache de la aplicación.', error);

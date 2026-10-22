@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="./styles.css?v=2.1.0-PROD">
+  <link rel="stylesheet" href="./styles.css?v=2.2.0-PROD">
   <!-- KaTeX para renderizado matemático impecable de fórmulas de física y cálculo -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -102,6 +102,18 @@
       </button>
     </div>
   </header>
+  <!-- BARRA RÁPIDA MÓVIL PERICIAL (XIAOMI / 4G Y 5G) -->
+  <div class="mobile-quick-action-bar">
+    <button type="button" class="btn-primary-glow btn-mobile-notes" onclick="openStudyNotesView()">
+      <span>📝 NOTAS CLASE 3 UC</span>
+    </button>
+    <button type="button" class="btn-secondary btn-mobile-english" onclick="openStudyNotesView(); switchNotesTab('tab-english');">
+      <span>🇬🇧 INGLÉS 3D</span>
+    </button>
+    <button type="button" class="btn-secondary btn-mobile-quiz" onclick="openStudyNotesView(); switchNotesTab('tab-quiz');">
+      <span>🎯 QUIZ 14</span>
+    </button>
+  </div>
 
   <!-- ======================================================== -->
   <!-- 2. LAYOUT PRINCIPAL: DASHBOARD DUAL SPLIT-SCREEN         -->
@@ -269,6 +281,29 @@
       <!-- BANNER DE DECISIÓN EN 3 SEGUNDOS (HERO CARDS)            -->
       <!-- ======================================================== -->
       <div class="decision-hero-grid">
+        <!-- Tarjeta VIP 0: NOTAS DE ESTUDIO CLASE 3 DIPLOMADO UC (DESTACADA) -->
+        <div class="hero-card study-notes-hero-card" style="border: 2px solid #FF5E00; background: linear-gradient(135deg, rgba(255, 94, 0, 0.22) 0%, rgba(14, 20, 38, 0.98) 100%); grid-column: 1 / -1; box-shadow: 0 0 20px rgba(255, 94, 0, 0.3);">
+          <div class="card-badge-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="badge-priority" style="background: rgba(255, 94, 0, 0.3); color: #FF5E00; font-weight: 800; padding: 4px 10px; border-radius: 6px; font-size: 11px;">🏛️ DIPLOMADO UC · NUEVO MÓDULO DISPONIBLE</span>
+            <span class="badge-date" style="color: #00F0FF; font-weight: 700; font-size: 12px;">Prof. Germán Millán</span>
+          </div>
+          <h2 class="hero-card-title" style="font-size: 20px; font-weight: 800; color: #FFF; margin-bottom: 6px;">📝 Notas de Estudio · Clase 3: Contratos &amp; Modalidades</h2>
+          <p class="hero-card-desc" style="font-size: 13.5px; color: #CBD5E1; margin-bottom: 14px;">Acceso inmediato a las 5 pestañas: Lectura estructurada, 8 Audios del Profesor y Reflexión ITO, 16 Flashcards 3D de Inglés ConTech y Simulador Oficial de 14 preguntas.</p>
+          <div class="hero-card-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn-primary-glow btn-study-notes" onclick="openStudyNotesView()" style="font-size: 14px; padding: 12px 22px; cursor: pointer;">
+              <span>🚀 ABRIR NOTAS DE ESTUDIO (5 PESTAÑAS)</span>
+            </button>
+            <button type="button" class="btn-secondary" onclick="openStudyNotesView(); switchNotesTab('tab-audios');" style="font-size: 13px; padding: 10px 16px;">
+              🎙️ Escuchar 8 Audios
+            </button>
+            <button type="button" class="btn-secondary" onclick="openStudyNotesView(); switchNotesTab('tab-english');" style="font-size: 13px; padding: 10px 16px;">
+              🇬🇧 Flashcards 3D Inglés
+            </button>
+            <button type="button" class="btn-secondary" onclick="openStudyNotesView(); switchNotesTab('tab-quiz');" style="font-size: 13px; padding: 10px 16px;">
+              🎯 Simulador 14 Preguntas
+            </button>
+          </div>
+        </div>
         <!-- Tarjeta 1: Prioridad de Examen (TRIPLE PRUEBA IPLACEX ESTA SEMANA) -->
         <div class="hero-card exam-priority-card" style="border-color: #EF4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(14, 20, 38, 0.95) 100%);">
           <div class="card-badge-row">
@@ -953,16 +988,16 @@
     <button type="button" id="pwa-update-action">Actualizar ahora</button>
   </aside>
 
-  <script src="./security.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/corpus.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/gemini-client.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/fsrs.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/pdf-viewer.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/curriculum.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/reference-ui.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/study-notes-data.js?v=2.1.0-PROD" defer></script>
-  <script src="./src/study-notes.js?v=2.1.0-PROD" defer></script>
-  <script src="./app.js?v=2.1.0-PROD" defer></script>
-  <script src="./pwa.js?v=2.1.0-PROD" defer></script>
+  <script src="./security.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/corpus.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/gemini-client.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/fsrs.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/pdf-viewer.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/curriculum.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/reference-ui.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/study-notes-data.js?v=2.2.0-PROD" defer></script>
+  <script src="./src/study-notes.js?v=2.2.0-PROD" defer></script>
+  <script src="./app.js?v=2.2.0-PROD" defer></script>
+  <script src="./pwa.js?v=2.2.0-PROD" defer></script>
 </body>
 </html>
