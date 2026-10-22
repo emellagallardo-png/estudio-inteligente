@@ -27,8 +27,8 @@
 | **Fase 3** | **Arquitectura Modular & PWA Real:** Desacoplar código inline, enlazar `manifest.json`, registrar `sw.js` network-first y migrar cachés obsoletas. | `[COMPLETADA 100%]` | `index.html`, `styles.css`, `pwa.js`, `manifest.json`, `sw.js`, `app-icon.svg` | Codex (GPT-5) |
 | **Fase 4** | **Capa Documental Verificable:** Corpus normativo con hash, cita de normas NCh/OGUC y control de abstención estricto. | `[COMPLETADA 100%]` | `/src/corpus.js`, `index.html`, `app.js`, `sw.js` | MEGA 2.0 |
 | **Fase 5** | **Conexión Gemini Segura & Agentes Reales:** Proxy seguro para API Keys con salida estructurada JSON (OMEN, ATLAS, ITO). | `[COMPLETADA 100%]` | `/src/gemini-client.js`, `app.js`, `index.html`, `sw.js` | Codex (GPT-5) |
-| **Fase 6** | **Reconstrucción Funcional:** PDF.js real para apuntes, transcripción YouTube, FSRS persistente en `IndexedDB`. | `[LISTO PARA INICIAR]` | `/src/fsrs.js`, `/src/pdf-viewer.js` | Por asignar |
-| **Fase 7** | **Móvil, Ergonomía y Accesibilidad:** Optimización para Xiaomi Redmi Note 13 Pro 5G (44px Fitts, OLED 1800 nits, ARIA). | `[PENDIENTE]` | `styles.css`, modales | Por asignar |
+| **Fase 6** | **Reconstrucción Funcional:** PDF.js real para apuntes, extracción local de texto, agenda dinámica y FSRS v4 persistente en `IndexedDB`. | `[COMPLETADA 100%]` | `/src/fsrs.js`, `/src/pdf-viewer.js`, `app.js`, `index.html`, `styles.css`, `sw.js` | Codex (GPT-5) |
+| **Fase 7** | **Móvil, Ergonomía y Accesibilidad:** Optimización para Xiaomi Redmi Note 13 Pro 5G (44px Fitts, OLED 1800 nits, ARIA). | `[LISTO PARA INICIAR]` | `styles.css`, modales | Por asignar |
 | **Fase 8** | **Verificación y Liberación:** Pruebas unitarias, simulación modo avión offline, auditoría final y publicación en GitHub. | `[PENDIENTE]` | Suite de pruebas | Por asignar |
 
 ---
@@ -40,6 +40,7 @@
 - **21-10-2026 (18:15):** Aprobación del CEO para iniciar con Claude Sonnet 4.6 Thinking bajo protocolo de ahorro de cuota y relevo en caliente.
 - **21-10-2026:** Fase 3 completada. Activos externos versionados, manifiesto instalable, registro PWA desacoplado, estrategia network-first, migración acotada de cachés heredadas y aviso visible de actualización.
 - **21-10-2026:** Fase 5 completada. GeminiClient v1beta con clave exclusiva en SecureVault, salida JSON estructurada, evidencia normativa inyectada desde CorpusEngine, timeout de 8 segundos, fallback offline y renderizado DOM seguro en Feynman/chat socrático.
+- **21-10-2026:** Fase 6 completada. FSRS v4 persiste estabilidad, dificultad, revisiones, vencimientos y racha en IndexedDB; PDF.js renderiza archivos locales y entrega texto paginado al contexto OMEN; agenda y exportación iCalendar operan con fecha del sistema y CRLF RFC 5545.
 
 ---
 `[MG] MEGA INSPECCIÓN · CONSULTORÍA TÉCNICA INTELIGENTE [ITO]`

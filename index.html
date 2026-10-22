@@ -53,7 +53,7 @@
       <div class="telemetry-pill calendar-pill" id="btn-open-calendar-modal" title="Exámenes Críticos de Esta Semana">
         <span class="exam-icon">⏳</span>
         <span class="pill-label">ESTA SEMANA:</span>
-        <span class="pill-value alert-text" id="next-exam-badge">3 PRUEBAS IPLACEX (23 - 25 OCT)</span>
+        <span class="pill-value alert-text" id="next-exam-badge">AGENDA CALCULANDO…</span>
       </div>
     </div>
 
@@ -206,7 +206,7 @@
           <div class="stat-bar-fill" id="retention-bar" style="width: 78.4%;"></div>
         </div>
         <div class="stat-footer">
-          <span>FSRS: 4 tarjetas para hoy</span>
+          <span id="fsrs-due-count">FSRS: calculando tarjetas…</span>
           <span class="alert-link" onclick="openCardsModal()">Repasar</span>
         </div>
       </div>
@@ -223,24 +223,19 @@
         <div class="hero-card exam-priority-card" style="border-color: #EF4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(14, 20, 38, 0.95) 100%);">
           <div class="card-badge-row">
             <span class="badge-priority" style="background: rgba(239, 68, 68, 0.2); color: #EF4444;">🚨 SEMANA CRÍTICA IPLACEX (3 PRUEBAS)</span>
-            <span class="badge-date" style="color: #FCA5A5; font-weight:700;">23, 24 y 25 Octubre</span>
+            <span class="badge-date" id="hero-exam-date" style="color: #FCA5A5; font-weight:700;">Agenda dinámica</span>
           </div>
           <h2 class="hero-card-title" id="hero-exam-title">Triple Evaluación: Obras Civiles, Industrializada & Viales</h2>
-          <p class="hero-card-desc">
-            Esta semana cierran las 3 evaluaciones sumativas de tu bimestre IPLACEX:<br>
-            • <strong>Obras Civiles (CIV-403):</strong> Cierre Viernes 23 Oct (23:59 hrs)<br>
-            • <strong>Construcción Industrializada (IND-401):</strong> Cierre Sábado 24 Oct (23:59 hrs)<br>
-            • <strong>Obras Viales (VIA-402):</strong> Cierre Domingo 25 Oct (23:59 hrs)
-          </p>
+          <p class="hero-card-desc" id="hero-exam-description">La recomendación se calcula desde la fecha actual del sistema.</p>
           <div class="hero-card-actions" style="flex-wrap: wrap; gap: 8px;">
             <button class="btn-primary-glow" onclick="startSprint('civiles')" style="background: #00F0FF; color:#000;">
-              <span>⚡ Sprint Civiles (23)</span>
+              <span>⚡ Sprint Civiles</span>
             </button>
             <button class="btn-primary-glow" onclick="startSprint('industrializada')" style="background: #A855F7; color:#FFF;">
-              <span>⚡ Sprint Industrializada (24)</span>
+              <span>⚡ Sprint Industrializada</span>
             </button>
             <button class="btn-primary-glow" onclick="startSprint('viales')" style="background: #FF5E00; color:#000;">
-              <span>⚡ Sprint Viales (25)</span>
+              <span>⚡ Sprint Viales</span>
             </button>
             <button class="btn-secondary" onclick="switchPedagogicalMode('calendar')">Ver en Calendario</button>
           </div>
@@ -461,7 +456,7 @@
               <!-- Calibración FSRS de Memoria -->
               <div class="fsrs-calibration-pill">
                 <span class="fsrs-tag">ALGORITMO FSRS:</span>
-                <span>Dificultad intrínseca: <strong>7.2/10</strong> · Intervalo de próximo repaso recalibrado para: <strong>Mañana a las 21:00 hrs</strong></span>
+                <span id="fsrs-calibration-text">La estabilidad, dificultad y próxima fecha se recalculan después de cada calificación.</span>
               </div>
             </div>
 
@@ -474,31 +469,18 @@
             <!-- Columna Izquierda: Visor PDF -->
             <div class="pdf-viewer-col">
               <div class="pdf-viewer-toolbar">
-                <span class="pdf-filename" id="pdf-active-name">Diapositivas_Clase_03_Industrializacion_IPLACEX.pdf</span>
+                <span class="pdf-filename" id="pdf-active-name">Selecciona un PDF local</span>
                 <div class="pdf-page-controls">
                   <button class="btn-tool" onclick="changePdfPage(-1)">◀ Anterior</button>
-                  <span id="pdf-page-num">Pág 12 / 48</span>
+                  <span id="pdf-page-num">Pág 0 / 0</span>
                   <button class="btn-tool" onclick="changePdfPage(1)">Siguiente ▶</button>
                 </div>
               </div>
               
               <div class="pdf-render-canvas-container" id="pdf-canvas-container">
-                <!-- Simulación visual de diapositiva técnica de alta resolución -->
-                <div class="mock-slide-content">
-                  <div class="slide-header-mock">IPLACEX · ESCUELA DE CONSTRUCCIÓN · ASIGNATURA: CONSTRUCCIÓN INDUSTRIALIZADA</div>
-                  <h3>TEMA 3.2: CONEXIONES HÚMEDAS Y EMBUTIDAS EN HORMIGÓN PREFABRICADO</h3>
-                  <div class="slide-diagram-mock">
-                    <div class="diagram-box">
-                      <div class="pilar-mock">PILAR PREMOLDEADO (H-50)</div>
-                      <div class="grout-joint-mock">JUNTA GROUT DE ALTA RESISTENCIA (60 MPa)</div>
-                      <div class="fundacion-mock">VÁSTAGOS DE ANCLAJE ACERO A63-42H EN FUNDACIÓN</div>
-                    </div>
-                  </div>
-                  <div class="slide-notes-mock">
-                    * Requisito de confinamiento sísmico según NCh430. La longitud de anclaje de armaduras longitudinales debe multiplicarse por un factor de 1.25 ante cargas cíclicas reversibles.
-                  </div>
-                </div>
+                <div class="pdf-empty-state">Carga un PDF desde “Ingesta de PDFs” para comenzar.</div>
               </div>
+              <div class="pdf-extraction-status" id="pdf-extraction-status" role="status" aria-live="polite">El procesamiento se realiza localmente.</div>
             </div>
 
             <!-- Columna Derecha: Chat Interactivo sobre el PDF -->
@@ -510,7 +492,7 @@
               <div class="chat-messages-container" id="pdf-chat-messages">
                 <div class="chat-msg ai-msg">
                   <div class="msg-sender">OMEN AG-41</div>
-                  <div class="msg-text">Esteban, estoy leyendo la <strong>página 12</strong> de tu PDF de IPLACEX. Nota que el profesor destaca el factor de 1.25 en longitudes de anclaje sísmico. ¿Deseas que te formule una pregunta tipo examen sobre esta diapositiva o que el ITO Auditor te diga cómo fiscalizar este anclaje en terreno?</div>
+                  <div class="msg-text">Carga un PDF local. Extraeré su texto por página para responder sobre evidencia real del documento.</div>
                 </div>
               </div>
               <div class="chat-input-bar">
@@ -529,7 +511,7 @@
             <div class="cal-view-toolbar">
               <div class="cal-month-selector">
                 <button class="cal-nav-btn" onclick="navigateCalendarMonth(-1)">◀</button>
-                <h3 class="cal-current-month" id="cal-month-title">OCTUBRE 2026</h3>
+                <h3 class="cal-current-month" id="cal-month-title">MES ACTUAL</h3>
                 <button class="cal-nav-btn" onclick="navigateCalendarMonth(1)">▶</button>
               </div>
 
@@ -640,6 +622,34 @@
   <!-- ======================================================== -->
   <!-- 3. MODALES TÁCTICOS Y HERRAMIENTAS ADICIONALES           -->
   <!-- ======================================================== -->
+
+  <!-- MODAL: REPASO FSRS V4 PERSISTENTE -->
+  <div class="modal-backdrop hidden" id="modal-fsrs">
+    <div class="modal-container fsrs-modal-card" role="dialog" aria-modal="true" aria-labelledby="fsrs-modal-title">
+      <div class="modal-header">
+        <div>
+          <h3 id="fsrs-modal-title">REPASO FSRS V4 · MEMORIA PERSISTENTE</h3>
+          <span class="fsrs-modal-subtitle" id="fsrs-session-status" role="status" aria-live="polite">Cargando tarjetas persistentes…</span>
+        </div>
+        <button class="btn-close-modal" type="button" onclick="closeFsrsModal()" aria-label="Cerrar repaso FSRS">✕</button>
+      </div>
+      <div class="modal-body fsrs-review-body">
+        <article class="fsrs-review-card">
+          <span class="fsrs-review-subject" id="fsrs-card-subject">FSRS</span>
+          <h4 id="fsrs-card-question">Preparando sesión de recuperación activa…</h4>
+          <div class="fsrs-review-answer hidden" id="fsrs-card-answer"></div>
+          <button class="btn-primary-glow fsrs-reveal-btn" id="fsrs-reveal-answer" type="button" onclick="revealFsrsAnswer()">Mostrar respuesta</button>
+        </article>
+        <div class="fsrs-rating-grid" aria-label="Calificar recuperación">
+          <button type="button" class="rating-again" data-fsrs-rating="1" onclick="rateFsrsCard(1)" disabled>Otra vez</button>
+          <button type="button" class="rating-hard" data-fsrs-rating="2" onclick="rateFsrsCard(2)" disabled>Difícil</button>
+          <button type="button" class="rating-good" data-fsrs-rating="3" onclick="rateFsrsCard(3)" disabled>Bien</button>
+          <button type="button" class="rating-easy" data-fsrs-rating="4" onclick="rateFsrsCard(4)" disabled>Fácil</button>
+        </div>
+        <p class="fsrs-schedule-result" id="fsrs-schedule-result">Revela la respuesta y califica tu recuperación.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: DUOLINGO ENGLISH SPRINT (5 MINUTOS) -->
   <div class="modal-backdrop hidden" id="modal-duolingo">
@@ -753,69 +763,7 @@
 
       <div class="modal-body">
         <div class="calendar-list" id="calendar-events-list">
-          <!-- Item 1: Obras Civiles -->
-          <div class="cal-event-card exam-event">
-            <div class="cal-event-date">
-              <span class="day">23</span>
-              <span class="month">OCT</span>
-            </div>
-            <div class="cal-event-details">
-              <span class="event-tag tag-exam">🔴 EVALUACIÓN SUMATIVA</span>
-              <h4>Obras Civiles (CIV-403) · Fundaciones y Hormigón Masivo</h4>
-              <p>Plataforma IPLACEX · Cierre Viernes 23:59 hrs · Ponderación: 30%</p>
-            </div>
-            <div class="cal-event-actions">
-              <span class="countdown-tag alert-tag">En 3 días (Viernes)</span>
-            </div>
-          </div>
-
-          <!-- Item 2: Construcción Industrializada -->
-          <div class="cal-event-card exam-event">
-            <div class="cal-event-date">
-              <span class="day">24</span>
-              <span class="month">OCT</span>
-            </div>
-            <div class="cal-event-details">
-              <span class="event-tag tag-exam">🔴 EVALUACIÓN SUMATIVA</span>
-              <h4>Construcción Industrializada (IND-401) · Prefabricados & Grout</h4>
-              <p>Plataforma IPLACEX · Cierre Sábado 23:59 hrs · Ponderación: 30%</p>
-            </div>
-            <div class="cal-event-actions">
-              <span class="countdown-tag alert-tag">En 4 días (Sábado)</span>
-            </div>
-          </div>
-
-          <!-- Item 3: Obras Viales -->
-          <div class="cal-event-card exam-event">
-            <div class="cal-event-date">
-              <span class="day">25</span>
-              <span class="month">OCT</span>
-            </div>
-            <div class="cal-event-details">
-              <span class="event-tag tag-exam">🔴 EVALUACIÓN SUMATIVA</span>
-              <h4>Obras Viales (VIA-402) · Pavimentos Asfálticos y Marshall</h4>
-              <p>Plataforma IPLACEX · Cierre Domingo 23:59 hrs · Ponderación: 30%</p>
-            </div>
-            <div class="cal-event-actions">
-              <span class="countdown-tag alert-tag">En 5 días (Domingo)</span>
-            </div>
-          </div>
-
-          <!-- Item 4: Clase UC -->
-          <div class="cal-event-card class-event">
-            <div class="cal-event-date">
-              <span class="day">26</span>
-              <span class="month">OCT</span>
-            </div>
-            <div class="cal-event-details">
-              <span class="event-tag tag-class">🔵 CLASE ONLINE EN VIVO</span>
-              <h4>Administración de Contratos · Taller de Resolución de Claims FIDIC</h4>
-              <p>Zoom UC · Lunes 19:00 a 21:30 hrs · Profesor Especialista</p>
-            </div>
-            <div class="cal-event-actions">
-              <span class="countdown-tag normal-tag">En 6 días (Lunes)</span>
-            </div>
-          </div>
+          <!-- Los eventos se generan desde la fecha local actual. -->
         </div>
 
         <div class="cal-footer-actions">
@@ -945,6 +893,8 @@
   <script src="./security.js?v=2026.10.21.1" defer></script>
   <script src="./src/corpus.js?v=2026.10.21.1" defer></script>
   <script src="./src/gemini-client.js?v=2026.10.21.1" defer></script>
+  <script src="./src/fsrs.js?v=2026.10.21.1" defer></script>
+  <script src="./src/pdf-viewer.js?v=2026.10.21.1" defer></script>
   <script src="./app.js?v=2026.10.21.1" defer></script>
   <script src="./pwa.js?v=2026.10.21.1" defer></script>
 </body>

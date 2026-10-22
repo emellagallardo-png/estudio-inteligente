@@ -287,6 +287,12 @@ let AppState = {
   duolingoCurrentIndex: 0
 };
 
+let FsrsSession = {
+  cards: [],
+  currentIndex: 0,
+  answerVisible: false
+};
+
 // Recuperar estado desde localStorage
 function initLocalPersistence() {
   try {
@@ -767,9 +773,24 @@ function processYoutubeUrl() {
   document.getElementById('yt-result-box').classList.remove('hidden');
 }
 
-function addYtCardsToFsrs() {
-  alert('✅ 5 Tarjetas FSRS agregadas a tu base de datos de Obras Viales.');
-  closeYoutubeModal();
+async function addYtCardsToFsrs() {
+  const cards = [
+    { subject: 'Obras Viales', prompt: '¿Qué representa el ensayo Marshall en una mezcla asfáltica?', answer: 'Relaciona estabilidad, flujo y vacíos para controlar el desempeño de la mezcla compactada.' },
+    { subject: 'Obras Viales', prompt: '¿Qué debe registrar el ITO al recibir mezcla asfáltica en obra?', answer: 'La trazabilidad del camión, hora, temperatura y aceptación o rechazo conforme a las EETT.' },
+    { subject: 'Obras Viales', prompt: '¿Cuál es el propósito del Proctor Modificado?', answer: 'Determinar la relación humedad-densidad y la densidad seca máxima de referencia.' },
+    { subject: 'Obras Viales', prompt: '¿Por qué debe mantenerse la ventana térmica de compactación?', answer: 'Porque fuera de ella la mezcla pierde trabajabilidad y no alcanza la densidad especificada sin dañarse.' },
+    { subject: 'Obras Viales', prompt: '¿Qué evidencia debe respaldar la recepción de una capa compactada?', answer: 'Resultados trazables de densidad, espesor, nivelación y cumplimiento de la especificación aplicable.' }
+  ];
+
+  try {
+    await FSRSEngine.addCards(cards);
+    await refreshFsrsDashboard();
+    closeYoutubeModal();
+    alert('✅ 5 tarjetas persistentes agregadas al repaso FSRS de Obras Viales.');
+  } catch (error) {
+    console.error('[FSRS] No fue posible agregar las tarjetas:', error);
+    alert(`No fue posible guardar las tarjetas: ${error.message}`);
+  }
 }
 
 function renderCalendarModalEvents() {
@@ -786,8 +807,8 @@ function renderCalendarModalEvents() {
     const monthNum = parseInt(parts[1], 10);
     const monthShort = MONTH_NAMES[monthNum - 1] ? MONTH_NAMES[monthNum - 1].slice(0, 3) : 'OCT';
 
-    // Cálculo dinámico de días faltantes
-    const today = new Date(2026, 9, 20); // 20 Oct 2026
+    // Cálculo dinámico de días faltantes respecto al sistema local
+    const today = startOfLocalDay(new Date());
     const evDate = new Date(parseInt(parts[0], 10), monthNum - 1, parseInt(dayNum, 10));
     const diffTime = evDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -812,22 +833,32 @@ function renderCalendarModalEvents() {
       tagClass = 'tag-class';
     }
 
-    card.innerHTML = `
-      <div class="cal-event-date">
-        <span class="day">${dayNum}</span>
-        <span class="month">${monthShort}</span>
-      </div>
-      <div class="cal-event-details">
-        <span class="event-tag ${tagClass}">${tagText}</span>
-        <h4>${ev.title}</h4>
-        <p>${ev.desc} · Cierre: ${ev.time}</p>
-      </div>
-      <div class="cal-event-actions">
-        <span class="countdown-tag ${countdownClass}">${countdownText}</span>
-      </div>
-    `;
+    const dateBox = document.createElement('div');
+    dateBox.className = 'cal-event-date';
+    dateBox.append(
+      createTextElement('span', 'day', dayNum),
+      createTextElement('span', 'month', monthShort)
+    );
+    const details = document.createElement('div');
+    details.className = 'cal-event-details';
+    details.append(
+      createTextElement('span', `event-tag ${tagClass}`, tagText),
+      createTextElement('h4', '', ev.title),
+      createTextElement('p', '', `${ev.desc} · Cierre: ${ev.time}`)
+    );
+    const actions = document.createElement('div');
+    actions.className = 'cal-event-actions';
+    actions.appendChild(createTextElement('span', `countdown-tag ${countdownClass}`, countdownText));
+    card.append(dateBox, details, actions);
     container.appendChild(card);
   });
+}
+
+function createTextElement(tagName, className, text) {
+  const node = document.createElement(tagName);
+  if (className) node.className = className;
+  node.textContent = String(text ?? '');
+  return node;
 }
 
 function openCalendarModal() {
@@ -851,17 +882,49 @@ function triggerPdfUpload() {
   document.getElementById('pdf-file-input').click();
 }
 
-function handlePdfUpload(event) {
+async function handlePdfUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  document.getElementById('pdf-active-name').textContent = file.name;
   switchPedagogicalMode('pdf');
-  alert(`📑 PDF "${file.name}" cargado exitosamente. Se ha desplegado el visor split-screen con OMEN.`);
+  try {
+    const result = await PDFViewer.loadFile(file);
+    appendPdfSystemMessage(
+      result.textPages
+        ? `Documento local listo: ${result.pages} páginas; se extrajo texto de ${result.textPages}. OMEN ya puede responder usando su contenido real.`
+        : `Documento renderizado (${result.pages} páginas), pero no contiene texto seleccionable. Para consultarlo se requiere una versión con OCR.`
+    );
+  } catch (error) {
+    console.error('[PDFViewer] Error de carga:', error);
+    appendPdfSystemMessage(`No fue posible procesar el PDF: ${error.message}`, true);
+  } finally {
+    event.target.value = '';
+  }
 }
 
-function changePdfPage(delta) {
-  alert('Navegando entre páginas del PDF.');
+async function changePdfPage(delta) {
+  try {
+    await PDFViewer.changePage(delta);
+  } catch (error) {
+    appendPdfSystemMessage(error.message, true);
+  }
+}
+
+function appendPdfSystemMessage(message, isError = false) {
+  const container = document.getElementById('pdf-chat-messages');
+  if (!container) return;
+  const messageBox = document.createElement('div');
+  messageBox.className = 'chat-msg ai-msg';
+  const sender = document.createElement('div');
+  sender.className = 'msg-sender';
+  sender.textContent = isError ? 'VISOR PDF · ALERTA' : 'OMEN · DOCUMENTO LOCAL';
+  if (isError) sender.style.color = 'var(--color-red)';
+  const text = document.createElement('div');
+  text.className = 'msg-text';
+  text.textContent = message;
+  messageBox.append(sender, text);
+  container.appendChild(messageBox);
+  container.scrollTop = container.scrollHeight;
 }
 
 async function sendPdfChatMessage() {
@@ -897,9 +960,17 @@ async function sendPdfChatMessage() {
   container.scrollTop = container.scrollHeight;
 
   const activeSubject = ACADEMIC_DATABASE[AppState.activeSubject] || { name: 'Construcción' };
-  const context = `${activeSubject.name || 'Construcción'} · ${activeSubject.lessonTitle || 'Documento en revisión'}`;
+  const documentContext = PDFViewer.hasDocument()
+    ? PDFViewer.getChatContext(text)
+    : 'No hay un PDF local cargado; informa esta limitación con claridad.';
+  const context = [
+    `${activeSubject.name || 'Construcción'} · ${activeSubject.lessonTitle || 'Documento en revisión'}`,
+    'CONTENIDO EXTRAÍDO DEL PDF LOCAL (incluye la página visible y las páginas más pertinentes):',
+    documentContext
+  ].join('\n\n');
   const systemInstruction = [
-    'Responde la consulta socrática sobre el documento o partida activa.',
+    'Responde la consulta socrática usando el texto real extraído del documento local.',
+    'Indica el número de página cuando el fragmento suministrado lo permita y no atribuyas al PDF contenido ausente.',
     'Separa comprensión conceptual, evidencia normativa y acción concreta del ITO.',
     'Si el corpus no respalda la afirmación, abstente expresamente.'
   ].join(' ');
@@ -913,8 +984,112 @@ function openFolioTemplate(subject) {
   alert(`Descargando Minuta Pericial Oficial de Libro de Obras para ${subject}.`);
 }
 
-function openCardsModal() {
-  alert('Iniciando sesión de repaso FSRS con las 4 tarjetas activas de hoy.');
+async function initializeFsrs() {
+  try {
+    await FSRSEngine.init();
+    await refreshFsrsDashboard();
+  } catch (error) {
+    console.error('[FSRS] Inicialización fallida:', error);
+    const dueLabel = document.getElementById('fsrs-due-count');
+    if (dueLabel) dueLabel.textContent = 'FSRS no disponible';
+  }
+}
+
+async function refreshFsrsDashboard() {
+  const stats = await FSRSEngine.getStats();
+  const dueLabel = document.getElementById('fsrs-due-count');
+  const retentionPercent = document.getElementById('retention-percent');
+  const retentionBar = document.getElementById('retention-bar');
+  if (dueLabel) dueLabel.textContent = `FSRS: ${stats.dueCount} tarjeta${stats.dueCount === 1 ? '' : 's'} para hoy`;
+  if (retentionPercent) retentionPercent.textContent = `${stats.retention.toFixed(1)}%`;
+  if (retentionBar) retentionBar.style.width = `${Math.max(0, Math.min(100, stats.retention))}%`;
+}
+
+async function openCardsModal() {
+  const modal = document.getElementById('modal-fsrs');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  const status = document.getElementById('fsrs-session-status');
+  if (status) status.textContent = 'Cargando tarjetas persistentes…';
+  try {
+    FsrsSession.cards = await FSRSEngine.getDueCards();
+    FsrsSession.currentIndex = 0;
+    FsrsSession.answerVisible = false;
+    renderFsrsCard();
+  } catch (error) {
+    if (status) status.textContent = `No fue posible abrir IndexedDB: ${error.message}`;
+  }
+}
+
+function closeFsrsModal() {
+  const modal = document.getElementById('modal-fsrs');
+  if (modal) modal.classList.add('hidden');
+}
+
+function renderFsrsCard() {
+  const status = document.getElementById('fsrs-session-status');
+  const subject = document.getElementById('fsrs-card-subject');
+  const prompt = document.getElementById('fsrs-card-question');
+  const answer = document.getElementById('fsrs-card-answer');
+  const reveal = document.getElementById('fsrs-reveal-answer');
+  const schedule = document.getElementById('fsrs-schedule-result');
+  const ratingButtons = document.querySelectorAll('#modal-fsrs [data-fsrs-rating]');
+  const card = FsrsSession.cards[FsrsSession.currentIndex];
+
+  if (!card) {
+    if (status) status.textContent = 'Repaso diario completado · no quedan tarjetas vencidas.';
+    if (subject) subject.textContent = 'FSRS AL DÍA';
+    if (prompt) prompt.textContent = 'La próxima sesión aparecerá automáticamente cuando una tarjeta llegue a su fecha programada.';
+    if (answer) {
+      answer.textContent = '';
+      answer.classList.add('hidden');
+    }
+    if (reveal) reveal.classList.add('hidden');
+    ratingButtons.forEach((button) => { button.disabled = true; });
+    return;
+  }
+
+  if (status) status.textContent = `Tarjeta ${FsrsSession.currentIndex + 1} de ${FsrsSession.cards.length}`;
+  if (subject) subject.textContent = card.subject;
+  if (prompt) prompt.textContent = card.prompt;
+  if (answer) {
+    answer.textContent = card.answer;
+    answer.classList.toggle('hidden', !FsrsSession.answerVisible);
+  }
+  if (reveal) {
+    reveal.classList.toggle('hidden', FsrsSession.answerVisible);
+    reveal.disabled = false;
+  }
+  ratingButtons.forEach((button) => { button.disabled = !FsrsSession.answerVisible; });
+  if (schedule) schedule.textContent = 'Revela la respuesta y califica tu recuperación, no la dificultad del tema.';
+}
+
+function revealFsrsAnswer() {
+  FsrsSession.answerVisible = true;
+  renderFsrsCard();
+}
+
+async function rateFsrsCard(rating) {
+  const card = FsrsSession.cards[FsrsSession.currentIndex];
+  if (!card || !FsrsSession.answerVisible) return;
+  const ratingButtons = document.querySelectorAll('#modal-fsrs [data-fsrs-rating]');
+  ratingButtons.forEach((button) => { button.disabled = true; });
+  try {
+    const reviewed = await FSRSEngine.reviewCard(card.id, rating, new Date());
+    const due = new Date(reviewed.dueDate).toLocaleString('es-CL', { dateStyle: 'medium', timeStyle: 'short' });
+    const calibration = document.getElementById('fsrs-calibration-text');
+    if (calibration) {
+      calibration.textContent = `Dificultad ${reviewed.difficulty.toFixed(2)}/10 · Estabilidad ${reviewed.stability.toFixed(2)} días · próximo repaso ${due}.`;
+    }
+    FsrsSession.cards.splice(FsrsSession.currentIndex, 1);
+    FsrsSession.answerVisible = false;
+    await refreshFsrsDashboard();
+    renderFsrsCard();
+  } catch (error) {
+    const schedule = document.getElementById('fsrs-schedule-result');
+    if (schedule) schedule.textContent = `No se pudo guardar la revisión: ${error.message}`;
+    ratingButtons.forEach((button) => { button.disabled = false; });
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -1021,20 +1196,49 @@ function renderSubjectRadar() {
 // --------------------------------------------------------------------------
 // 13. MOTOR DE CALENDARIO VISUAL INTERACTIVO & EXPORTACIÓN .ICS
 // --------------------------------------------------------------------------
-const CALENDAR_EVENTS = [
-  { id: 1, date: '2026-10-21', type: 'study', title: 'Time-Blocking Mentor EMG: Obras Civiles & Viales', time: '21:00 - 21:45', desc: 'Repaso intensivo de Ensayos Marshall, Densidades Proctor y Fundaciones' },
-  { id: 2, date: '2026-10-23', type: 'exam', title: '🔴 Evaluación Sumativa: Obras Civiles (IPLACEX)', time: 'Viernes 23:59 Cierre', desc: 'Plataforma IPLACEX · Módulo 03: Fundaciones Especiales & Hormigón Masivo (30%)' },
-  { id: 3, date: '2026-10-24', type: 'exam', title: '🔴 Evaluación Sumativa: Construcción Industrializada (IPLACEX)', time: 'Sábado 23:59 Cierre', desc: 'Plataforma IPLACEX · Módulo 03: Hormigón Prefabricado y Conexiones Húmedas Grout (30%)' },
-  { id: 4, date: '2026-10-25', type: 'exam', title: '🔴 Evaluación Sumativa: Obras Viales (IPLACEX)', time: 'Domingo 23:59 Cierre', desc: 'Plataforma IPLACEX · Módulo 03: Estructuración y Control de Pavimentos Asfálticos (30%)' },
-  { id: 5, date: '2026-10-26', type: 'class', title: '🔵 Clase Online en Vivo: Claims FIDIC (UC)', time: 'Lunes 19:00 - 21:30', desc: 'Diplomados UC · Taller con Caso Práctico de Reclamaciones Contractuales' },
-  { id: 6, date: '2026-10-28', type: 'class', title: '🔵 Clase Online: Montaje Industrializado (IPLACEX)', time: 'Miércoles 20:00 - 21:30', desc: 'IPLACEX · Sesión de Acompañamiento Docente en Vivo' },
-  { id: 7, date: '2026-11-08', type: 'exam', title: '🔴 Evaluación Final: Gestión de Proyectos (UC)', time: 'Domingo 23:59 Cierre', desc: 'Diplomados UC · Entrega de Matriz EVM y Curva S' }
-];
+let CALENDAR_EVENTS = [];
 
+function startOfLocalDay(value) {
+  const date = value instanceof Date ? new Date(value) : new Date(value);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function toLocalDateKey(value) {
+  const date = value instanceof Date ? value : new Date(value);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function addCalendarDays(value, days) {
+  const date = startOfLocalDay(value);
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
+function weekdayLabel(value) {
+  const label = value.toLocaleDateString('es-CL', { weekday: 'long' });
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
+}
+
+function createCalendarEvents(referenceDate = new Date()) {
+  const day = (offset) => addCalendarDays(referenceDate, offset);
+  const eventDate = (offset) => toLocalDateKey(day(offset));
+  return [
+    { id: 1, date: eventDate(0), type: 'study', title: 'Time-Blocking Mentor EMG: Obras Civiles & Viales', time: '21:00 - 21:45', desc: 'Repaso intensivo de Ensayos Marshall, Densidades Proctor y Fundaciones' },
+    { id: 2, date: eventDate(3), type: 'exam', title: '🔴 Evaluación Sumativa: Obras Civiles (IPLACEX)', time: `${weekdayLabel(day(3))} 23:59 Cierre`, desc: 'Plataforma IPLACEX · Módulo 03: Fundaciones Especiales & Hormigón Masivo (30%)' },
+    { id: 3, date: eventDate(4), type: 'exam', title: '🔴 Evaluación Sumativa: Construcción Industrializada (IPLACEX)', time: `${weekdayLabel(day(4))} 23:59 Cierre`, desc: 'Plataforma IPLACEX · Módulo 03: Hormigón Prefabricado y Conexiones Húmedas Grout (30%)' },
+    { id: 4, date: eventDate(5), type: 'exam', title: '🔴 Evaluación Sumativa: Obras Viales (IPLACEX)', time: `${weekdayLabel(day(5))} 23:59 Cierre`, desc: 'Plataforma IPLACEX · Módulo 03: Estructuración y Control de Pavimentos Asfálticos (30%)' },
+    { id: 5, date: eventDate(6), type: 'class', title: '🔵 Clase Online en Vivo: Claims FIDIC (UC)', time: `${weekdayLabel(day(6))} 19:00 - 21:30`, desc: 'Diplomados UC · Taller con Caso Práctico de Reclamaciones Contractuales' },
+    { id: 6, date: eventDate(8), type: 'class', title: '🔵 Clase Online: Montaje Industrializado (IPLACEX)', time: `${weekdayLabel(day(8))} 20:00 - 21:30`, desc: 'IPLACEX · Sesión de Acompañamiento Docente en Vivo' },
+    { id: 7, date: eventDate(19), type: 'exam', title: '🔴 Evaluación Final: Gestión de Proyectos (UC)', time: `${weekdayLabel(day(19))} 23:59 Cierre`, desc: 'Diplomados UC · Entrega de Matriz EVM y Curva S' }
+  ];
+}
+
+const calendarToday = new Date();
 let CalendarState = {
-  year: 2026,
-  month: 9, // Octubre (0-indexed)
-  selectedDate: '2026-10-23',
+  year: calendarToday.getFullYear(),
+  month: calendarToday.getMonth(),
+  selectedDate: toLocalDateKey(calendarToday),
   filter: 'all'
 };
 
@@ -1044,8 +1248,24 @@ const MONTH_NAMES = [
 ];
 
 function initVisualCalendar() {
+  CALENDAR_EVENTS = createCalendarEvents(new Date());
+  updateDynamicStudyRecommendation();
   renderCalendarMatrix();
   renderAgendaItems();
+}
+
+function updateDynamicStudyRecommendation() {
+  const exams = CALENDAR_EVENTS.filter((event) => event.type === 'exam').slice(0, 3);
+  const badge = document.getElementById('next-exam-badge');
+  const heroDate = document.getElementById('hero-exam-date');
+  const heroDescription = document.getElementById('hero-exam-description');
+  const format = (date) => new Date(`${date}T12:00:00`).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+  const dates = exams.map((event) => format(event.date));
+  if (badge) badge.textContent = `${exams.length} PRUEBAS · ${dates.join(' · ').toLocaleUpperCase('es-CL')}`;
+  if (heroDate) heroDate.textContent = dates.join(', ');
+  if (heroDescription) {
+    heroDescription.textContent = exams.map((event) => `${format(event.date)} · ${event.title.replace(/^🔴\s*/, '')}`).join('  •  ');
+  }
 }
 
 function renderCalendarMatrix() {
@@ -1068,12 +1288,12 @@ function renderCalendarMatrix() {
   for (let i = startOffset - 1; i >= 0; i--) {
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell inactive-month';
-    cell.innerHTML = `<span class="day-num">${prevMonthLastDay - i}</span>`;
+    cell.appendChild(createTextElement('span', 'day-num', prevMonthLastDay - i));
     grid.appendChild(cell);
   }
 
   // Días del mes actual
-  const todayStr = '2026-10-20'; // Fecha fija actual del sistema
+  const todayStr = toLocalDateKey(new Date());
   for (let d = 1; d <= lastDay.getDate(); d++) {
     const dayStr = `${CalendarState.year}-${String(CalendarState.month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const cell = document.createElement('div');
@@ -1084,16 +1304,15 @@ function renderCalendarMatrix() {
 
     // Eventos de este día
     const dayEvents = CALENDAR_EVENTS.filter(e => e.date === dayStr);
-    let dotsHtml = '<div class="day-event-dots">';
+    const dots = document.createElement('div');
+    dots.className = 'day-event-dots';
     dayEvents.forEach(e => {
-      dotsHtml += `<span class="dot-${e.type}" title="${e.title}"></span>`;
+      const dot = document.createElement('span');
+      dot.className = `dot-${e.type}`;
+      dot.title = e.title;
+      dots.appendChild(dot);
     });
-    dotsHtml += '</div>';
-
-    cell.innerHTML = `
-      <span class="day-num">${d}</span>
-      ${dotsHtml}
-    `;
+    cell.append(createTextElement('span', 'day-num', d), dots);
 
     cell.onclick = () => {
       CalendarState.selectedDate = dayStr;
@@ -1110,7 +1329,7 @@ function renderCalendarMatrix() {
   for (let n = 1; n <= nextPadding; n++) {
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell inactive-month';
-    cell.innerHTML = `<span class="day-num">${n}</span>`;
+    cell.appendChild(createTextElement('span', 'day-num', n));
     grid.appendChild(cell);
   }
 }
@@ -1162,14 +1381,17 @@ function renderAgendaItems() {
     if (ev.type === 'exam') { tagText = 'PRUEBA / EXAMEN'; tagClass = 'tag-exam'; }
     if (ev.type === 'class') { tagText = 'CLASE EN VIVO'; tagClass = 'tag-class'; }
 
-    card.innerHTML = `
-      <div class="agenda-item-top">
-        <span class="agenda-item-date">${ev.date} · ${ev.time}</span>
-        <span class="agenda-item-tag ${tagClass}">${tagText}</span>
-      </div>
-      <div class="agenda-item-title">${ev.title}</div>
-      <div class="agenda-item-desc">${ev.desc}</div>
-    `;
+    const top = document.createElement('div');
+    top.className = 'agenda-item-top';
+    top.append(
+      createTextElement('span', 'agenda-item-date', `${ev.date} · ${ev.time}`),
+      createTextElement('span', `agenda-item-tag ${tagClass}`, tagText)
+    );
+    card.append(
+      top,
+      createTextElement('div', 'agenda-item-title', ev.title),
+      createTextElement('div', 'agenda-item-desc', ev.desc)
+    );
 
     container.appendChild(card);
   });
@@ -1181,7 +1403,7 @@ function addPersonalTimeBlock() {
   
   const text = subjectInput.value.trim() || 'Sesión de Foco OMEN';
   const duration = durationSelect.value;
-  const today = '2026-10-20';
+  const today = toLocalDateKey(new Date());
 
   CALENDAR_EVENTS.push({
     id: Date.now(),
@@ -1197,22 +1419,55 @@ function addPersonalTimeBlock() {
   alert(`⚡ Bloque de estudio de ${duration} min reservado exitosamente para hoy a las 21:00 hrs.`);
 }
 
-function downloadIcsCalendar() {
-  // Generador oficial RFC 5545 iCalendar para Google Calendar / Xiaomi
-  let icsContent = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//MEGA INSPECCION//ESTUDIO INTELIGENTE 2.0//ES\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:Estudio Inteligente 2.0 - J. Esteban Mella\r\n";
+function escapeIcsText(value) {
+  return String(value || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\r?\n/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
 
-  CALENDAR_EVENTS.forEach(ev => {
-    const dateFormatted = ev.date.replace(/-/g, '');
-    icsContent += `BEGIN:VEVENT\r\nUID:${ev.id}-estudio-2026@megainspeccion.cl\r\nDTSTAMP:20261020T000000Z\r\nDTSTART;VALUE=DATE:${dateFormatted}\r\nSUMMARY:${ev.title}\r\nDESCRIPTION:${ev.desc} - Horario: ${ev.time}\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n`;
+function formatIcsTimestamp(value = new Date()) {
+  return value.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+}
+
+function downloadIcsCalendar() {
+  // RFC 5545 exige líneas separadas por CRLF, incluida la línea final.
+  const CRLF = '\r\n';
+  const generatedAt = formatIcsTimestamp(new Date());
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//MEGA INSPECCION//ESTUDIO INTELIGENTE 2.0//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Estudio Inteligente 2.0 - J. Esteban Mella'
+  ];
+
+  CALENDAR_EVENTS.forEach((event) => {
+    const dateFormatted = event.date.replace(/-/g, '');
+    const endDate = toLocalDateKey(addCalendarDays(`${event.date}T12:00:00`, 1)).replace(/-/g, '');
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:${event.id}-${dateFormatted}@megainspeccion.cl`,
+      `DTSTAMP:${generatedAt}`,
+      `DTSTART;VALUE=DATE:${dateFormatted}`,
+      `DTEND;VALUE=DATE:${endDate}`,
+      `SUMMARY:${escapeIcsText(event.title)}`,
+      `DESCRIPTION:${escapeIcsText(`${event.desc} - Horario: ${event.time}`)}`,
+      'STATUS:CONFIRMED',
+      'END:VEVENT'
+    );
   });
 
-  icsContent += "END:VCALENDAR\r\n";
+  lines.push('END:VCALENDAR');
+  const icsContent = `${lines.join(CRLF)}${CRLF}`;
 
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = "Estudio_Inteligente_2.0_Calendario.ics";
+  a.download = 'Estudio_Inteligente_2.0_Calendario.ics';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1355,6 +1610,17 @@ document.addEventListener('DOMContentLoaded', () => {
   renderGitHubHeatmap();
   renderSubjectRadar();
   initVisualCalendar();
+  initializeFsrs();
+  try {
+    PDFViewer.init();
+  } catch (error) {
+    console.error('[PDFViewer] Inicialización fallida:', error);
+    const status = document.getElementById('pdf-extraction-status');
+    if (status) {
+      status.textContent = error.message;
+      status.dataset.status = 'warning';
+    }
+  }
   checkAiStudioStatus();
 
   // Event Listeners Header
@@ -1366,6 +1632,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const calBadge = document.getElementById('btn-open-calendar-modal');
   if (calBadge) calBadge.addEventListener('click', () => openCalendarModal());
+
+  const pdfChatInput = document.getElementById('pdf-chat-input');
+  if (pdfChatInput) {
+    pdfChatInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendPdfChatMessage();
+      }
+    });
+  }
 
   console.log('🏛️ [ESTUDIO INTELIGENTE 2.0]: Suite Cognitiva Personal cargada y operativa al 100%.');
 });
