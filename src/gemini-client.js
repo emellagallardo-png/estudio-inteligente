@@ -244,7 +244,10 @@ const GeminiClient = (() => {
 
         const json = await response.json().catch(() => ({}));
         const modelUnavailable = response.status === 404 || json?.error?.status === 'NOT_FOUND';
-        if ((!response.ok || json.error) && modelUnavailable && candidateModel !== COMPATIBILITY_MODEL) {
+        const isTemporaryHighDemand = response.status === 503 || response.status === 429 || (json?.error?.message && json.error.message.includes('high demand'));
+
+        if ((!response.ok || json.error) && (modelUnavailable || isTemporaryHighDemand) && candidateModel !== COMPATIBILITY_MODEL) {
+          console.warn(`[GeminiClient] Modelo ${candidateModel} no disponible (${json?.error?.message || response.status}). Conmutando automáticamente a modelo de respaldo ${COMPATIBILITY_MODEL}...`);
           continue;
         }
         if (!response.ok || json.error) {
