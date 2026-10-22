@@ -65,4 +65,16 @@
 - README e interfaz distinguen exportación ICS real de sincronización OAuth inexistente, y resumen YouTube de demostración de una transcripción real. Se documentan las funciones y métricas que siguen usando datos de ejemplo.
 - Alcance de certificación: software y pruebas de esta entrega. El corpus es un índice local sin documentos oficiales/hash; la prueba confirma estructura y recuperación, no exactitud jurídica. PDF.js y worker se cargan desde CDN y no se garantizan offline. No se ha realizado instalación física en Xiaomi, revisión asistiva especializada ni validación contra Google con una clave real.
 
+---
+
+### 6. MÓDULO CANÓNICO: NOTAS DE ESTUDIO · DIPLOMADO UC (CLASE 3 MILLÁN)
+- **Fecha de Integración:** 22 de Octubre de 2026.
+- **Autoridad:** J. Esteban Mella Gallardo · CEO & Jefe de ITO.
+- **Componentes Creados:**
+  1. `src/study-notes-data.js`: Store estructurado oficial con 100% de la doctrina, 8 audios literales discriminados por autor (Cátedra Germán Millán vs. Reflexión ITO Terreno EMG), 16 términos de inglés técnico doctrinal, banco auditado de 14 preguntas de control y caso resuelto del Foro ERNC (100 PYMES).
+  2. `src/study-notes.js`: Controlador modular con selector jerárquico, 5 pestañas interactivas, reproductor pericial de audio con soundwave y velocidad, Flip Flashcards 3D, simulador interactivo de quiz con justificación doctrinal y detección de trampas de examen.
+  3. `index.html`: Botón destacado `📝 NOTAS DE ESTUDIO` en Navbar y Sidebar; integración bidireccional con el botón `🇬🇧 INGLÉS CONTECH` y el modal Duolingo ConTech.
+  4. `styles.css`: Estilos Sci-Fi Dark Luxury, animación de giro 3D en tarjetas, visualizador de audio, controles Fitts 44px WCAG y responsividad Xiaomi.
+  5. `sw.js`: Inclusión de `study-notes-data.js` y `study-notes.js` en el precache PWA.
+
 `[MG] MEGA INSPECCIÓN · CONSULTORÍA TÉCNICA INTELIGENTE [ITO]`

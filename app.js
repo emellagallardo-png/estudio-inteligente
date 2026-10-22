@@ -834,6 +834,36 @@ const DUOLINGO_QUESTIONS = [
     ],
     correct: 0,
     explanation: "¡Impecable! Curing membrane = Membrana de curado para evitar la evaporación de agua en NCh170."
+  },
+  {
+    phrase: "«The partnering agreement established clear shared goals based on mutual trust, without reducing baseline costs directly.»",
+    options: [
+      "El acuerdo de partnering fijó objetivos compartidos basados en confianza mutua, sin reducir costos base de forma directa.",
+      "El contrato a suma alzada redujo un 30% los costos mediante la eliminación de la prima de riesgo.",
+      "El subcontratista asumió la totalidad de los reclamos y multas por demoras operacionales."
+    ],
+    correct: 0,
+    explanation: "¡Excelente! Partnering = Acuerdo de colaboración y beneficio mutuo (IPA confirma que no busca primordialmente abaratar costos sino alinear objetivos)."
+  },
+  {
+    phrase: "«Under the Early Contractor Involvement (ECI) model, the contractor joined during feasibility and mutated to EPC lump-sum at 80% detailed engineering.»",
+    options: [
+      "El contratista participó desde la factibilidad y mutó a EPC suma alzada al 80% de ingeniería de detalle.",
+      "El mandante canceló la licitación por falta de financiamiento en el estudio de impacto ambiental.",
+      "El consorcio subcontrató la ingeniería de detalle a un agente EPCM internacional."
+    ],
+    correct: 0,
+    explanation: "¡Brillante! ECI = Involucramiento temprano del constructor para inyectar constructibilidad antes de congelar el precio."
+  },
+  {
+    phrase: "«The Dispute Review Board issued a non-binding technical recommendation that prevented formal arbitration.»",
+    options: [
+      "El Panel Técnico de Controversias (Dispute Board) emitió una recomendación técnica no vinculante que evitó el arbitraje formal.",
+      "El tribunal ordinario de justicia dictó sentencia condenatoria contra el consorcio de ingeniería.",
+      "El mandante cobró la boleta de garantía bancaria por abandono intempestivo de las faenas."
+    ],
+    correct: 0,
+    explanation: "¡Impecable! Dispute Boards = Paneles tempranos en obra que resuelven pacíficamente más del 95% de las diferencias técnicas."
   }
 ];
 
